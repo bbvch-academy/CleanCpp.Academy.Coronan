@@ -20,9 +20,8 @@ target_include_directories(
 )
 
 target_sources(
-    ${PROJECT_NAME}
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/corona-api_parser.cpp
-            ${HEADER_LIST}
+    ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/corona-api_parser.cpp
+                            ${HEADER_LIST}
 )
 
 target_link_libraries(
@@ -74,9 +73,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
                                 -fconcepts
     )
 elseif(CMAKE_COMPILER_IS_CLANGCXX)
-    target_compile_options(${PROJECT_NAME} 
-        PRIVATE 
-            -Wno-gnu-zero-variadic-macro-arguments 
+    target_compile_options(
+        ${PROJECT_NAME} PRIVATE -Wno-gnu-zero-variadic-macro-arguments
     )
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
