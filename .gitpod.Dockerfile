@@ -14,9 +14,14 @@ RUN sudo apt-get -qq install -y libxcb-xinerama0-dev \
  && sudo apt-get -qq install -y perl 
 
 #install qt
+USER root
 COPY --from=bbvch/qt:5.14.2 /usr/local/Qt /usr/local/Qt
 ENV Qt5_DIR=/usr/local/Qt
+RUN wget https://altushost-swe.dl.sourceforge.net/project/dejavu/dejavu/2.37/dejavu-fonts-ttf-2.37.tar.bz2 \
+&& tar -xf dejavu-fonts-ttf-2.37.tar.bz2 && rm dejavu-fonts-ttf-2.37.tar.bz2 \
+ && mv dejavu-fonts-ttf-2.37/ttf /usr/local/Qt/lib/fonts
 
+USER gitpod
 # lcov and doxygen
 RUN sudo apt-get -qq install -y lcov doxygen graphviz
 
