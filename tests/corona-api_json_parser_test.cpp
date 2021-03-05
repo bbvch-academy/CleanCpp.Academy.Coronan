@@ -63,51 +63,51 @@ TEST_SUITE_BEGIN("corona-api parser");
 
 TEST_CASE("The corona-api parser")
 {
-  coronan::ApiParser testee;
-  auto json_object = testee.parse(test_json);
+
+  auto json_object = coronan::api_parser::parse(test_json);
   SUBCASE("returns the country data")
   {
-    REQUIRE(json_object.cn == "Switzerland");
-    REQUIRE(json_object.cc == "CH");
-    REQUIRE(json_object.pop == 7581000);
+    REQUIRE(json_object.name == "Switzerland");
+    REQUIRE(json_object.country_code == "CH");
+    REQUIRE(json_object.population == 7581000);
   }
 
   SUBCASE("returns the today cases")
   {
     REQUIRE(json_object.today.date == "2020-04-03T00:27:34.432Z");
     REQUIRE(json_object.today.deaths == 48);
-    REQUIRE(json_object.today.conf == 1059);
+    REQUIRE(json_object.today.confirmed == 1059);
   }
 
   SUBCASE("returns the lates data")
   {
     REQUIRE(json_object.latest.date == "2020-04-03T00:27:34.432Z");
     REQUIRE(json_object.latest.deaths == 536);
-    REQUIRE(json_object.latest.conf == 18827);
+    REQUIRE(json_object.latest.confirmed == 18827);
     REQUIRE(json_object.latest.recovered == 4013);
     REQUIRE(json_object.latest.critical == 348);
-    REQUIRE(json_object.latest.dr == 2.8469750889679712);
-    REQUIRE(json_object.latest.rr == 21.315132522441175);
-    REQUIRE(json_object.latest.rdr == 0.0);
-    REQUIRE(json_object.latest.cpmp == 2175);
+    REQUIRE(json_object.latest.death_rate == 2.8469750889679712);
+    REQUIRE(json_object.latest.recovery_rate == 21.315132522441175);
+    REQUIRE_FALSE(json_object.latest.recovered_vs_death_ratio.has_value());
+    REQUIRE(json_object.latest.cases_per_million_population == 2175);
   }
 
   SUBCASE("returns the timeline data ascending")
   {
     REQUIRE(json_object.timeline[0].date == "2020-04-03T00:20:32.326Z");
     REQUIRE(json_object.timeline[0].deaths == 536);
-    REQUIRE(json_object.timeline[0].conf == 18827);
+    REQUIRE(json_object.timeline[0].confirmed == 18827);
     REQUIRE(json_object.timeline[0].active == 14278);
     REQUIRE(json_object.timeline[0].recovered == 4013);
-    REQUIRE(json_object.timeline[0].new_conf == 1059);
+    REQUIRE(json_object.timeline[0].new_confirmed == 1059);
     REQUIRE(json_object.timeline[0].new_recovered == 1046);
     REQUIRE(json_object.timeline[0].new_deaths == 48);
     REQUIRE(json_object.timeline[1].date == "2020-04-01T19:58:34.000Z");
     REQUIRE(json_object.timeline[1].deaths == 488);
-    REQUIRE(json_object.timeline[1].conf == 17768);
+    REQUIRE(json_object.timeline[1].confirmed == 17768);
     REQUIRE(json_object.timeline[1].active == 14313);
     REQUIRE(json_object.timeline[1].recovered == 2967);
-    REQUIRE(json_object.timeline[1].new_conf == 1163);
+    REQUIRE(json_object.timeline[1].new_confirmed == 1163);
     REQUIRE(json_object.timeline[1].new_recovered == 1144);
     REQUIRE(json_object.timeline[1].new_deaths == 55);
   }
@@ -199,8 +199,9 @@ constexpr auto test_country_json = "{ \
 
 TEST_CASE("The corona-api country parser")
 {
-  coronan::ApiParser testee;
-  auto json_overview_object = testee.parse_countries(test_country_json);
+
+  auto json_overview_object =
+      coronan::api_parser::parse_countries(test_country_json);
   SUBCASE("returns the country data")
   {
     REQUIRE(json_overview_object.countries[0].name == "Austria");

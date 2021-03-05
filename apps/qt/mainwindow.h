@@ -33,6 +33,9 @@ private Q_SLOTS:
   void update_ui();
 
 private:
+  void populate_country_box();
+
+private:
   QChartView* m_chartView = nullptr;
   Ui_CoronanWidgetForm* m_ui = nullptr;
   std::string m_url{};
