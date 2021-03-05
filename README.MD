@@ -43,4 +43,4 @@ You can also build it yourself:
 For source code formatting [clang-format](https://clang.llvm.org/docs/ClangFormat.html) for C++ files and [cmake-format](https://pypi.org/project/cmake-format/) for the CMake files are used.
 
 ### gitpod
-For ease of use [gitpod.io](https://www.gitpod.io/) can be used for this project. Simply press the ![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod) buttom on top of thid README to start coding. Check out the [gitpod docu](https://www.gitpod.io/docs/getting-started/) for getting started.
+For ease of use [gitpod.io](https://www.gitpod.io/) can be used for this project. Simply press the ![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod) buttom ot the top of this README to start coding. Check out the [gitpod docu](https://www.gitpod.io/docs/getting-started/) for getting started.
