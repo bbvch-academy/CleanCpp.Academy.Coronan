@@ -17,8 +17,9 @@ using SSLException = Poco::Net::SSLException;
 class SSLInitializer
 {
 public:
-  explicit SSLInitializer(InvalidCertificateHandler* certificate_handler,
-                          Poco::Net::Context::Ptr context);
+  explicit SSLInitializer(
+      Poco::SharedPtr<InvalidCertificateHandler> certificate_handler,
+      Poco::Net::Context::Ptr context);
   void initialize();
 
   ~SSLInitializer();
@@ -29,7 +30,7 @@ public:
   initialize_with_accept_certificate_handler();
 
 private:
-  Poco::SharedPtr<InvalidCertificateHandler> certificate_handler_ptr;
+  Poco::SharedPtr<InvalidCertificateHandler> certificate_handler_ptr{};
   Poco::Net::Context::Ptr context_ptr;
 };
 

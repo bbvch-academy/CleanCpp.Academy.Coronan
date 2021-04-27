@@ -2,7 +2,7 @@
 
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
-#include <doctest/doctest.h>
+#include <catch2/catch.hpp>
 #include <iostream>
 #include <sstream>
 
@@ -36,7 +36,7 @@ struct TestHTTPSession
     TestHTTPSession::host_ = host;
   }
 
-  std::ostream& sendRequest(TestHTTPRequest&) { return std::cout; }
+  std::ostream& sendRequest(TestHTTPRequest& /*unused*/) { return std::cout; }
 
   std::istream& receiveResponse(HTTPResponse& response)
   {
@@ -68,11 +68,11 @@ struct TestHTTPSession
   inline static std::istringstream response_{""};
 };
 
-TEST_CASE("HTTPClient get")
+TEST_CASE("HTTPClient get", "[HTTPClient]")
 {
-  SUBCASE("Initializes a session")
+  SECTION("Initializes a session")
   {
-    auto uri = "http://server.com:80/";
+    auto const* uri = "http://server.com:80/";
     auto resonse =
         coronan::HTTPClientT<TestHTTPSession, TestHTTPRequest>::get(uri);
 
@@ -80,9 +80,9 @@ TEST_CASE("HTTPClient get")
     REQUIRE(TestHTTPSession::port_ == 80);
   }
 
-  SUBCASE("Creates a request")
+  SECTION("Creates a request")
   {
-    auto uri = "http://server.com:80/test";
+    auto const* uri = "http://server.com:80/test";
     auto resonse =
         coronan::HTTPClientT<TestHTTPSession, TestHTTPRequest>::get(uri);
     REQUIRE(TestHTTPRequest::request_ == HTTPRequest::HTTP_GET);
@@ -90,17 +90,17 @@ TEST_CASE("HTTPClient get")
     REQUIRE(TestHTTPRequest::path_ == "/test");
   }
 
-  SUBCASE("Returns status, reason and response")
+  SECTION("Returns status, reason and response")
   {
     auto const expected_status = HTTPResponse::HTTP_FOUND;
-    auto const expected_reason = "All ok";
-    auto const expected_response = "Test";
+    auto const* const expected_reason = "All ok";
+    auto const* const expected_response = "Test";
 
     TestHTTPSession::set_response_status(expected_status);
     TestHTTPSession::set_response_reason(expected_reason);
     TestHTTPSession::set_response(expected_response);
 
-    auto uri = "http://server.com:80/test";
+    auto const* uri = "http://server.com:80/test";
     auto resonse =
         coronan::HTTPClientT<TestHTTPSession, TestHTTPRequest>::get(uri);
 

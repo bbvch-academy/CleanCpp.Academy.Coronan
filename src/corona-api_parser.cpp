@@ -1,8 +1,7 @@
 #include "coronan/corona-api_parser.hpp"
 
-#include "rapidjson/document.h"
-
 #include <algorithm>
+#include <rapidjson/document.h>
 
 namespace coronan::api_parser {
 
