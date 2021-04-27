@@ -16,9 +16,16 @@ int main(int argc, char* argv[])
   // Initialize SSL contect and handler
   using Poco::Net::Context;
   using Poco::Net::InvalidCertificateHandler;
+
+ #ifdef WIN32
+  Poco::Net::Context::Ptr context_ptr = Context::Ptr(
+      new Context{Context::TLS_CLIENT_USE, "", Context::VERIFY_RELAXED});
+
+#else
   Poco::Net::Context::Ptr context_ptr = Context::Ptr(
       new Context(Context::TLS_CLIENT_USE, "", "", "", Context::VERIFY_RELAXED,
                   9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH"));
+#endif
 
   Poco::SharedPtr<InvalidCertificateHandler> certificate_handler_ptr =
       new Poco::Net::AcceptCertificateHandler(false);
