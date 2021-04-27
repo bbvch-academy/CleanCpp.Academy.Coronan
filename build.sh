@@ -6,7 +6,6 @@ BUILD_DIR=""
 CMAKE=cmake
 CONAN=conan
 COVERAGE=false
-BUILD_DEP=false
 COVERAGE_OUT=""
 BUILD_TYPE=Debug
 
@@ -47,10 +46,6 @@ if [ $# -ge 1 ]; then
             BUILD_TYPE=Release
             shift # past argument
             ;;
-        -i|--init)
-            BUILD_DEP=true
-            shift # past argument
-            ;;
         --cmake)
             CMAKE="$2"
             shift # past argument
@@ -82,10 +77,6 @@ fi
 
 [[ -d "${BUILD_DIR}" ]] || mkdir ${BUILD_DIR}
 
-
-if [ "$BUILD_DEP" = true ] ; then
-    (cd ${BUILD_DIR} && ${CONAN} install --build poco --build missing ..)
-fi
 
 if [ "$COVERAGE" = true ] ; then
     (cd ${BUILD_DIR} && ${CMAKE} -DCODE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug ..)

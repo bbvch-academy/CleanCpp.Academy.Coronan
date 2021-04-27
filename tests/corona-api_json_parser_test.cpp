@@ -1,6 +1,6 @@
 #include "coronan/corona-api_parser.hpp"
 
-#include <doctest/doctest.h>
+#include <catch2/catch.hpp>
 
 namespace {
 
@@ -59,27 +59,26 @@ constexpr auto test_json = "{ \
     \"_cacheHit\": false \
 }";
 
-TEST_SUITE_BEGIN("corona-api parser");
-
-TEST_CASE("The corona-api parser")
+TEST_CASE("The corona-api parser", "[corona-api parser")
 {
+
   coronan::ApiParser testee;
   auto json_object = testee.parse(test_json);
-  SUBCASE("returns the country data")
+  SECTION("returns the country data")
   {
     REQUIRE(json_object.cn == "Switzerland");
     REQUIRE(json_object.cc == "CH");
     REQUIRE(json_object.pop == 7581000);
   }
 
-  SUBCASE("returns the today cases")
+  SECTION("returns the today cases")
   {
     REQUIRE(json_object.today.date == "2020-04-03T00:27:34.432Z");
     REQUIRE(json_object.today.deaths == 48);
     REQUIRE(json_object.today.conf == 1059);
   }
 
-  SUBCASE("returns the lates data")
+  SECTION("returns the lates data")
   {
     REQUIRE(json_object.latest.date == "2020-04-03T00:27:34.432Z");
     REQUIRE(json_object.latest.deaths == 536);
@@ -92,7 +91,7 @@ TEST_CASE("The corona-api parser")
     REQUIRE(json_object.latest.cpmp == 2175);
   }
 
-  SUBCASE("returns the timeline data ascending")
+  SECTION("returns the timeline data ascending")
   {
     REQUIRE(json_object.timeline[0].date == "2020-04-03T00:20:32.326Z");
     REQUIRE(json_object.timeline[0].deaths == 536);
@@ -197,11 +196,11 @@ constexpr auto test_country_json = "{ \
     \"_cacheHit\": true \
 }";
 
-TEST_CASE("The corona-api country parser")
+TEST_CASE("The corona-api country parser", "[corona-api parser")
 {
   coronan::ApiParser testee;
   auto json_overview_object = testee.parse_countries(test_country_json);
-  SUBCASE("returns the country data")
+  SECTION("returns the country data")
   {
     REQUIRE(json_overview_object.countries[0].name == "Austria");
     REQUIRE(json_overview_object.countries[0].code == "AT");
@@ -211,7 +210,5 @@ TEST_CASE("The corona-api country parser")
     REQUIRE(json_overview_object.countries[2].code == "CH");
   }
 }
-
-TEST_SUITE_END();
 
 } // namespace

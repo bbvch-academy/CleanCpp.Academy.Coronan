@@ -16,7 +16,7 @@ target_sources(
             ${CMAKE_CURRENT_LIST_DIR}/corona-api_json_parser_test.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE coronan::lib CONAN_PKG::doctest)
+target_link_libraries(${PROJECT_NAME} PRIVATE coronan::lib CONAN_PKG::catch2)
 
 target_compile_options(
     ${PROJECT_NAME}

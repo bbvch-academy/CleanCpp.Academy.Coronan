@@ -20,11 +20,7 @@ To build the project you need python and a recent [conan version](https://conan.
 Further a recent version of [CMake](https://cmake.org/) (> 3.10), a modern C++ compiler (C++17) and [Qt](https://www.qt.io/) with [QtCharts](https://doc.qt.io/qt-5/qtcharts-index.html) must be installed.
 
 ### How to build
-First time to install conan packages and build the project in `build` execute:
-```bash
-#> ./build.sh --init build
-```
-After that you can use 
+To build the project in `build` execute:
 ```bash
 #> ./build.sh build
 ```
@@ -34,7 +30,6 @@ See `./build.sh -h` for more options
 You can also build it yourself:
 ```bash
 #> mkdir build
-#> (cd build && conan install --build poco --build missing ..)
 #> (cd build && cmake ..)
 #> cmake --build build
 ```
