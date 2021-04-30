@@ -79,6 +79,8 @@ namespace api_parser {
 // Clean Code Note: No need to have class. free functions are preferable
 // (Scott Meyers  Effective C++ item 23: Prefer Non-member Non-friend Functions
 // to Member Functions)
+// C++ Core Guidelines: C.4 - Make a function a member only if it needs direct
+// access to the representation of a class
 /**
  * Parse a json.
  * @note Must have the format as described at
