@@ -58,17 +58,22 @@ int main(int argc, char* argv[])
 
     auto response = coronan::HTTPClient::get(url);
 
-    auto const& data = coronan::api_parser::parse(response.get_response_body());
+    auto const& data = coronan::api_parser::parse_country(response.get_response_body());
     std::cout << "\"datetime\", \"confirmed\", \"death\", \"recovered\", "
                  "\"active\"\n";
 
     // Clean Code Note: Range based for loop is much less verbose and clearer to
     // understand
+
+    auto const to_string = [](auto val) {
+      return val.has_value() ? std::to_string(val.value()) : "--";
+    };
+
     for (auto const& data_point : data.timeline)
     {
-      std::cout << data_point.date << ", " << data_point.confirmed << ", "
-                << data_point.deaths << ", " << data_point.recovered << ", "
-                << data_point.active << "\n";
+      std::cout << data_point.date << ", " << to_string(data_point.confirmed) << ", "
+                << to_string(data_point.deaths) << ", " << to_string(data_point.recovered) << ", "
+                << to_string(data_point.active) << "\n";
     }
   }
   catch (coronan::SSLException const& ex)

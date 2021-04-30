@@ -38,9 +38,9 @@ constexpr auto update_country_overview_table = [](auto* table,
   auto const value_col_index = 1;
   auto row_index = 0;
   constexpr auto no_table_entries = 7;
-  std::array<
-      std::pair<char const*, std::variant<uint32_t, std::optional<double>>>,
-      no_table_entries> const overview_table_entries = {
+  std::array<std::pair<char const*, std::variant<std::optional<uint32_t>,
+                                                 std::optional<double>>>,
+             no_table_entries> const overview_table_entries = {
       {std::make_pair("Population:", country_data.population),
        std::make_pair("Confirmed:", country_data.latest.confirmed),
        std::make_pair("Death:", country_data.latest.deaths),
@@ -58,7 +58,10 @@ constexpr auto update_country_overview_table = [](auto* table,
     // (optional) type without if statements
     auto const value_str =
         std::visit(overloaded{
-                       [](uint32_t arg) { return QString::number(arg); },
+                       [](std::optional<uint32_t> arg) {
+                         return arg.has_value() ? QString::number(arg.value())
+                                                : QString{"--"};
+                       },
                        [](std::optional<double> arg) {
                          return arg.has_value() ? QString::number(arg.value())
                                                 : QString{"--"};
@@ -102,12 +105,26 @@ constexpr auto create_line_chart =
                                                "yyyy-MM-ddThh:mm:ss.zZ");
         auto const msecs_since_epoche =
             static_cast<double>(date.toMSecsSinceEpoch());
-        death_serie->append(QPointF(msecs_since_epoche, data_point.deaths));
-        confirmed_serie->append(
-            QPointF(msecs_since_epoche, data_point.confirmed));
-        active_serie->append(QPointF(msecs_since_epoche, data_point.active));
-        recovered_serie->append(
-            QPointF(msecs_since_epoche, data_point.recovered));
+        if (data_point.deaths.has_value())
+        {
+          death_serie->append(
+              QPointF(msecs_since_epoche, data_point.deaths.value()));
+        }
+        if (data_point.confirmed.has_value())
+        {
+          confirmed_serie->append(
+              QPointF(msecs_since_epoche, data_point.confirmed.value()));
+        }
+        if (data_point.active.has_value())
+        {
+          active_serie->append(
+              QPointF(msecs_since_epoche, data_point.active.value()));
+        }
+        if (data_point.recovered.has_value())
+        {
+          recovered_serie->append(
+              QPointF(msecs_since_epoche, data_point.recovered.value()));
+        }
       }
 
       for (auto* serie : series)
@@ -124,7 +141,7 @@ constexpr auto create_line_chart =
       axisY->setTitleText("Cases");
       axisY->setLabelFormat("%i  ");
 
-      auto const max_cases = country_data.latest.confirmed;
+      auto const max_cases = country_data.latest.confirmed.value_or(0);
       axisY->setRange(0, max_cases);
       axisY->setLinePenColor(confirmed_serie->pen().color());
       axisY->setLabelsColor(confirmed_serie->pen().color());
@@ -203,7 +220,7 @@ CoronanWidget::get_country_data(std::string const& country_code) const
 {
   auto const http_response =
       coronan::HTTPClient::get(m_url + std::string{"/"} + country_code);
-  return coronan::api_parser::parse(http_response.get_response_body());
+  return coronan::api_parser::parse_country(http_response.get_response_body());
 }
 
 void CoronanWidget::update_ui()
