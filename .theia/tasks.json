@@ -1,8 +1,6 @@
 {
-	// See https://go.microsoft.com/fwlink/?LinkId=733558
-	// for the documentation about the tasks.json format
-	"version": "2.0.0",
-	"tasks": [
+    "version": "2.0.0",
+    "tasks": [
         {
             "label": "build",
             "type": "shell",
@@ -11,7 +9,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": [ ]
+            "problemMatcher": []
         },
         {
             "label": "build coverage",
@@ -21,8 +19,8 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": [ ]
-        },        
+            "problemMatcher": []
+        },
         {
             "label": "build init",
             "type": "shell",
@@ -31,7 +29,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": [ ]
+            "problemMatcher": []
         },
         {
             "label": "clean",
@@ -41,7 +39,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": [ ]
+            "problemMatcher": []
         },
         {
             "label": "unttests",
@@ -51,14 +49,13 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "problemMatcher": [ ]
+            "problemMatcher": []
         },
         {
             "label": "format files",
             "type": "shell",
             "command": "./format_source_files.sh",
-            "problemMatcher": [ ]
+            "problemMatcher": []
         }
-
     ]
 }

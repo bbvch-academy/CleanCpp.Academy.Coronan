@@ -7,8 +7,7 @@ namespace coronan::api_parser {
 
 namespace {
 
-// // Clean Code Note: Using optionals allows to properly handle "non" values
-
+// Clean Code Note: Using optionals allows to properly handle "non" values
 template <typename Ret_T, typename DOM_T,
           std::enable_if_t<std::is_arithmetic<Ret_T>::value, bool> = true>
 std::optional<Ret_T> get_value(DOM_T const& json_dom_object,
@@ -17,8 +16,7 @@ std::optional<Ret_T> get_value(DOM_T const& json_dom_object,
   if (auto member_it = json_dom_object.FindMember(name.c_str());
       member_it != json_dom_object.MemberEnd())
   {
-    auto const& value = member_it->value;
-    if (value.IsNumber())
+    if (auto const& value = member_it->value; value.IsNumber())
     {
       return value.GetDouble();
     }
@@ -112,6 +110,8 @@ constexpr auto parse_timeline = [](auto const& json_dom_object) {
 
 } // namespace
 
+// cppcheck-suppress unusedFunction
+// Justification: Is used
 CountryObject parse_country(std::string const& json)
 {
   rapidjson::Document document;
@@ -136,7 +136,8 @@ CountryObject parse_country(std::string const& json)
   }
   return country_object;
 }
-
+// cppcheck-suppress unusedFunction
+// Justification: Is used
 OverviewObject parse_countries(std::string const& json)
 {
   rapidjson::Document document;

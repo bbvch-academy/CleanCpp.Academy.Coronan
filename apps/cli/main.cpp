@@ -39,8 +39,7 @@ int main(int argc, char* argv[])
     std::stringstream usage;
     usage << cli;
 
-    auto const result = cli.parse({argc, argv});
-    if (!result)
+    if (auto const result = cli.parse({argc, argv}); !result)
     {
       fmt::print(stderr, "Error in comman line: {}\n", result.errorMessage());
       fmt::print("{}\n", usage.str());
@@ -60,9 +59,8 @@ int main(int argc, char* argv[])
     // Clean Code Note: With auto the typ must not be written explicitly
     auto const url = std::string{"https://corona-api.com/countries/"} + country;
 
-    auto const response = coronan::HTTPClient::get(url);
-
-    if (response.get_status() == Poco::Net::HTTPResponse::HTTP_OK)
+    if (auto const response = coronan::HTTPClient::get(url);
+        response.get_status() == Poco::Net::HTTPResponse::HTTP_OK)
     {
 
       auto const& data =
@@ -84,15 +82,22 @@ int main(int argc, char* argv[])
     }
     else
     {
-      fmt::print("Error fetching {url}. Response Status: {status}.\n",
-                 fmt::arg("url", url),
-                 fmt::arg("status", response.get_status()));
+      fmt::print(
+          stderr,
+          "Error fetching {url}. Response Status: {reason} ({status_code}).\n",
+          fmt::arg("url", url), fmt::arg("reason", response.get_reason()),
+          fmt::arg("status_code", response.get_status()));
     }
   }
   catch (coronan::SSLException const& ex)
   {
 
     fmt::print(stderr, "SSL Exception: {}\n", ex.displayText());
+    exit(EXIT_FAILURE);
+  }
+  catch (std::exception const& ex)
+  {
+    fmt::print(stderr, "{}\n", ex.what());
     exit(EXIT_FAILURE);
   }
   // Poco::Net::uninitializeSSL(); called in destructor of the static

@@ -61,7 +61,7 @@ struct CountryObject
         new_recovered{}; /**< new recovered cases since last time data */
   };
 
-  std::vector<timeline_t> timeline; /**< array of (daily) data */
+  std::vector<timeline_t> timeline{}; /**< array of (daily) data */
 };
 
 struct OverviewObject
@@ -72,7 +72,7 @@ struct OverviewObject
     std::string code{}; /**< Country Code , e.g. ch */
   };
 
-  std::vector<country_t> countries; /**< array of available countries */
+  std::vector<country_t> countries{}; /**< array of available countries */
 };
 
 namespace api_parser {

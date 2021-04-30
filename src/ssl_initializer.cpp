@@ -6,11 +6,11 @@
 
 namespace {
 using Poco::Net::Context;
-#ifdef WIN32
-constexpr auto certificate_file = "";
+
 constexpr auto ca_location = "";
 constexpr auto verification_mode = Context::VERIFY_RELAXED;
 
+#ifdef WIN32
 constexpr auto create_NetSSL_context = []() {
   return Context::Ptr{
       new Context{Context::TLS_CLIENT_USE, ca_location, verification_mode}};
@@ -18,8 +18,6 @@ constexpr auto create_NetSSL_context = []() {
 #else
 constexpr auto private_key_file = "";
 constexpr auto certificate_file = "";
-constexpr auto ca_location = "";
-constexpr auto verification_mode = Context::VERIFY_RELAXED;
 constexpr auto verification_depth = 9;
 constexpr auto load_default_cas = false;
 constexpr auto cipher_list = "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH";
@@ -59,7 +57,6 @@ std::unique_ptr<SSLInitializer>
 // cppcheck-suppress unusedFunction
 SSLInitializer::initialize_with_accept_certificate_handler()
 {
-
   constexpr auto handle_errors_on_server_side = false;
 
   Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> cert_handler =
