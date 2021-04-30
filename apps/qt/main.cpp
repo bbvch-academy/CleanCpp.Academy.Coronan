@@ -33,13 +33,16 @@ Poco::Net::SSLManager::instance().initializeClient(
   try
   {
 
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
     QMainWindow window;
-    CoronanWidget* widget = new CoronanWidget(api_url);
-    window.setCentralWidget(widget);
-    window.resize(900, 600);
     window.show();
-    return a.exec();
+    window.setWindowTitle("Co[ro]nan");
+    auto const window_width = 900;
+    auto const window_height = 600;
+    window.resize(window_width, window_height);
+    auto* const widget = new CoronanWidget(api_url);
+    window.setCentralWidget(widget);
+    return app.exec(); // NOLINT(readability-static-accessed-through-instance)
   }
   catch (coronan::SSLException const& ex)
   {
