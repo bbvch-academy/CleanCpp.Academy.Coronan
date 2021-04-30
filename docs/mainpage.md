@@ -18,7 +18,7 @@ First time to install conan packages and build the project in `build` execute:
 ```bash
 #> ./build.sh --init build
 ```
-After that you can use 
+After that you can use
 ```bash
 #> ./build.sh build
 ```

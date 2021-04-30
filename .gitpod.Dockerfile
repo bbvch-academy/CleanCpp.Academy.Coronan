@@ -11,7 +11,7 @@ RUN sudo cp /etc/apt/sources.list /etc/apt/sources.list~ \
 RUN sudo apt-get -qq build-dep -y qt5-default
 RUN sudo apt-get -qq install -y libxcb-xinerama0-dev \
  && sudo apt-get -qq install -y '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev \
- && sudo apt-get -qq install -y perl 
+ && sudo apt-get -qq install -y perl
 
 #install qt
 USER root

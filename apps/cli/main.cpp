@@ -58,7 +58,8 @@ int main(int argc, char* argv[])
 
     auto response = coronan::HTTPClient::get(url);
 
-    auto const& data = coronan::api_parser::parse_country(response.get_response_body());
+    auto const& data =
+        coronan::api_parser::parse_country(response.get_response_body());
     std::cout << "\"datetime\", \"confirmed\", \"death\", \"recovered\", "
                  "\"active\"\n";
 
@@ -71,8 +72,9 @@ int main(int argc, char* argv[])
 
     for (auto const& data_point : data.timeline)
     {
-      std::cout << data_point.date << ", " << to_string(data_point.confirmed) << ", "
-                << to_string(data_point.deaths) << ", " << to_string(data_point.recovered) << ", "
+      std::cout << data_point.date << ", " << to_string(data_point.confirmed)
+                << ", " << to_string(data_point.deaths) << ", "
+                << to_string(data_point.recovered) << ", "
                 << to_string(data_point.active) << "\n";
     }
   }

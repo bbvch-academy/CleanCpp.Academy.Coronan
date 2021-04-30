@@ -134,7 +134,7 @@ CountryObject parse_country(std::string const& json)
     country_object.latest.date = current_date;
     country_object.timeline = parse_timeline(country_data_object);
   }
-return country_object;
+  return country_object;
 }
 
 OverviewObject parse_countries(std::string const& json)
