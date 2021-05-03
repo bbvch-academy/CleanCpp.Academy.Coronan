@@ -36,7 +36,7 @@ private:
   coronan::CountryObject get_country_data(std::string const& country_code);
   void populate_country_box();
 
-  QChartView* m_chartView = nullptr;
-  Ui_CoronanWidgetForm* m_ui = nullptr;
-  std::string m_url{};
+  QChartView* chartView = nullptr;
+  Ui_CoronanWidgetForm* ui = nullptr;
+  std::string api_url{};
 };
