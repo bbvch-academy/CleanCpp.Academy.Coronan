@@ -4,9 +4,8 @@
 #include <Poco/Net/InvalidCertificateHandler.h>
 #include <Poco/Net/SSLException.h>
 #include <Poco/SharedPtr.h>
+#include <functional>
 #include <memory>
-
-using Poco::Net::InvalidCertificateHandler;
 
 namespace coronan {
 
@@ -21,20 +20,21 @@ using SSLException = Poco::Net::SSLException;
 class SSLInitializer
 {
 public:
-  ~SSLInitializer();
-
+  using SSLInitializerPtr =
+      std::unique_ptr<SSLInitializer, std::function<void(SSLInitializer*)>>;
   // Clean Code Note: Make explicite that the returning object must be used,
   // otherwise uninitialze happens
-  [[nodiscard]] static std::unique_ptr<SSLInitializer>
+  [[nodiscard]] static SSLInitializerPtr
   initialize_with_accept_certificate_handler();
 
 private:
   explicit SSLInitializer(
-      Poco::SharedPtr<InvalidCertificateHandler> certificate_handler,
+      Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> certificate_handler,
       Poco::Net::Context::Ptr context);
 
   void initialize_client();
-  Poco::SharedPtr<InvalidCertificateHandler> certificate_handler_ptr{};
+  Poco::SharedPtr<Poco::Net::InvalidCertificateHandler>
+      certificate_handler_ptr{};
   Poco::Net::Context::Ptr context_ptr;
 };
 

@@ -34,10 +34,6 @@ namespace coronan {
 
 using Poco::Net::Context;
 
-// Clean Code Note: automatically always uninitializeSSL (even in case of
-// exceptions).
-SSLInitializer::~SSLInitializer() { Poco::Net::uninitializeSSL(); }
-
 SSLInitializer::SSLInitializer(
     Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> certificate_handler,
     Poco::Net::Context::Ptr context)
@@ -53,7 +49,7 @@ void SSLInitializer::initialize_client()
       nullptr, certificate_handler_ptr, context_ptr);
 }
 
-std::unique_ptr<SSLInitializer>
+SSLInitializer::SSLInitializerPtr
 // cppcheck-suppress unusedFunction
 SSLInitializer::initialize_with_accept_certificate_handler()
 {
@@ -61,9 +57,11 @@ SSLInitializer::initialize_with_accept_certificate_handler()
 
   Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> cert_handler =
       new Poco::Net::AcceptCertificateHandler{handle_errors_on_server_side};
+
   // Using `new` to access a non-public constructor.
-  auto ssl_initializer = std::unique_ptr<SSLInitializer>{
-      new SSLInitializer{std::move(cert_handler), create_NetSSL_context()}};
+  auto ssl_initializer = SSLInitializerPtr{
+      new SSLInitializer{std::move(cert_handler), create_NetSSL_context()},
+      [](SSLInitializer*) { Poco::Net::uninitializeSSL(); }};
 
   ssl_initializer->initialize_client();
   return ssl_initializer;

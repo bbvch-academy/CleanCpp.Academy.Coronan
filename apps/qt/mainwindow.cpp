@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 
-#include "coronan/corona-api_parser.hpp"
-#include "coronan/http_client.hpp"
+#include "coronan/corona-api_client.hpp"
 #include "ui_mainwindow.h"
 
 #include <QDateTime>
@@ -38,19 +37,21 @@ constexpr auto update_country_overview_table = [](auto* table,
                                                   auto const& country_data) {
   auto const label_col_index = 0;
   auto const value_col_index = 1;
+
+  using VariantT = std::variant<std::optional<uint32_t>, std::optional<double>>;
+  using CaptionValuePair = std::pair<QString, VariantT>;
   constexpr auto no_table_entries = 7;
-  std::array<std::pair<char const*, std::variant<std::optional<uint32_t>,
-                                                 std::optional<double>>>,
-             no_table_entries> const overview_table_entries = {
-      {std::make_pair("Population:", country_data.population),
-       std::make_pair("Confirmed:", country_data.latest.confirmed),
-       std::make_pair("Death:", country_data.latest.deaths),
-       std::make_pair("Recovered:", country_data.latest.recovered),
-       std::make_pair("Critical:", country_data.latest.critical),
-       std::make_pair("Death rate:", country_data.latest.death_rate),
-       std::make_pair("Recovery rate::", country_data.latest.recovery_rate)}};
+  std::array<CaptionValuePair, no_table_entries> const overview_table_entries =
+      {{std::make_pair("Population:", country_data.population),
+        std::make_pair("Confirmed:", country_data.latest.confirmed),
+        std::make_pair("Death:", country_data.latest.deaths),
+        std::make_pair("Recovered:", country_data.latest.recovered),
+        std::make_pair("Critical:", country_data.latest.critical),
+        std::make_pair("Death rate:", country_data.latest.death_rate),
+        std::make_pair("Recovery rate::", country_data.latest.recovery_rate)}};
 
   table->setRowCount(no_table_entries);
+
   auto row_index = 0;
   for (auto const& pair : overview_table_entries)
   {
@@ -59,12 +60,9 @@ constexpr auto update_country_overview_table = [](auto* table,
     // Clean Code Note: variant with visit functions allows to handle the empty
     // (optional) type without if statements
     auto const value_str = std::visit(
-        overloaded{
-            [](auto const& arg) {
-              return arg.has_value() ? QString::number(arg.value())
-                                     : QString{"--"};
-            },
-        },
+        overloaded{[](auto const& arg) {
+          return arg.has_value() ? QString::number(arg.value()) : QString{"--"};
+        }},
         pair.second);
 
     auto* const value_widget = new QTableWidgetItem{value_str};
@@ -148,21 +146,10 @@ constexpr auto create_chart_view = [](auto const& country_data) {
   return chartView;
 };
 
-constexpr auto show_fetch_error_msg_box =
-    [](QWidget* parent, std::string const& url,
-       coronan::HTTPResponse const& response) {
-      auto const error_msg =
-          QString("Error fetching url \"%1\".\n Response Status: %2 (%3).")
-              .arg(QString::fromStdString(url),
-                   QString::fromStdString(response.get_reason()),
-                   QString::number(response.get_status()));
-      QMessageBox::warning(parent, "Error", error_msg);
-    };
-
 } // namespace
 
-CoronanWidget::CoronanWidget(std::string&& api_url, QWidget* parent)
-    : QWidget{parent}, ui{new Ui_CoronanWidgetForm}, api_url{std::move(api_url)}
+CoronanWidget::CoronanWidget(QWidget* parent)
+    : QWidget{parent}, ui{new Ui_CoronanWidgetForm}
 {
   ui->setupUi(this);
 
@@ -177,66 +164,42 @@ CoronanWidget::~CoronanWidget() { delete ui; }
 
 void CoronanWidget::populate_country_box()
 {
-  if (auto const http_response = coronan::HTTPClient::get(api_url);
-      http_response.get_status() == Poco::Net::HTTPResponse::HTTP_OK)
+  auto* country_combo = ui->countryComboBox;
+  auto countries = coronan::CoronaAPIClient{}.get_countries();
+
+  std::sort(begin(countries), end(countries),
+            [](auto const& a, auto const& b) { return a.name < b.name; });
+
+  for (auto const& country : countries)
   {
-    auto* country_combo = ui->countryComboBox;
-    auto countries =
-        coronan::api_parser::parse_countries(http_response.get_response_body())
-            .countries;
-
-    std::sort(begin(countries), end(countries),
-              [](auto const& a, auto const& b) { return a.name < b.name; });
-
-    for (auto const& country : countries)
-    {
-      country_combo->addItem(country.name.c_str(), country.code.c_str());
-    }
-    if (int const index = country_combo->findData("CH"); index != -1)
-    { // -1 for not found
-      country_combo->setCurrentIndex(index);
-    }
+    country_combo->addItem(country.name.c_str(), country.code.c_str());
   }
-  else
-  {
-    auto const exception_msg =
-        std::string{"Error fetching country data from url \""} + api_url +
-        std::string{"\".\n\n Response status: "} + http_response.get_reason() +
-        std::string{"("} + std::to_string(http_response.get_status()) +
-        std::string{")."};
-    throw coronan::HTTPClientException{exception_msg};
+  if (int const index = country_combo->findData("CH"); index != -1)
+  { // -1 for not found
+    country_combo->setCurrentIndex(index);
   }
 }
 
 coronan::CountryObject
 CoronanWidget::get_country_data(std::string const& country_code)
 {
-  auto const country_url = api_url + std::string{"/"} + country_code;
   try
   {
-
-    if (auto const http_response = coronan::HTTPClient::get(country_url);
-        http_response.get_status() == Poco::Net::HTTPResponse::HTTP_OK)
-    {
-      return coronan::api_parser::parse_country(
-          http_response.get_response_body());
-    }
-    else
-    {
-      show_fetch_error_msg_box(this, api_url, http_response);
-    }
+    return coronan::CoronaAPIClient{}.get_country_data(country_code);
+  }
+  catch (coronan::SSLException const& ex)
+  {
+    QMessageBox::warning(this, "SSL Exception",
+                         QString::fromStdString(ex.displayText()));
   }
   catch (coronan::HTTPClientException const& ex)
   {
-    QMessageBox::warning(this, "Exception", QString::fromStdString(ex.what()));
+    QMessageBox::warning(this, "HTTP Client Exception",
+                         QString::fromStdString(ex.what()));
   }
   catch (std::exception const& ex)
   {
-    auto const exception_msg =
-        QString("Error fetching url \"%1\".\n\n Exception occured: %2")
-            .arg(QString::fromStdString(country_url),
-                 QString::fromStdString(ex.what()));
-    QMessageBox::warning(this, "Exception", exception_msg);
+    QMessageBox::warning(this, "Exception", QString::fromStdString(ex.what()));
   }
   return {};
 }

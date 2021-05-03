@@ -58,9 +58,7 @@ private:
 /**
  * Simple Stateless HTTP Client using by default a HTTPS Session
  */
-template <typename SessionT = Poco::Net::HTTPSClientSession,
-          typename HTTPRequestT = Poco::Net::HTTPRequest>
-struct HTTPClientT
+template <typename SessionT, typename HTTPRequestT> struct HTTPClientT
 {
   /**
    * Execute a HTTP GET
@@ -103,6 +101,7 @@ struct HTTPClientT
   }
 };
 
-using HTTPClient = HTTPClientT<>;
+using HTTPClient =
+    HTTPClientT<Poco::Net::HTTPSClientSession, Poco::Net::HTTPRequest>;
 
 } // namespace coronan
