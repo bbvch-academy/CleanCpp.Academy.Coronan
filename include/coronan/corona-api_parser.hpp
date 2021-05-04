@@ -5,19 +5,27 @@
 #include <vector>
 
 namespace coronan {
+// Clean Code Note: By using the optional type we can handle the case with
+// no value properly
+
+/**
+ * Country Information
+ *
+ */
+struct CountryInfo
+{
+  std::string name{};     /**< Country name */
+  std::string iso_code{}; /**< ISO 3166-1 alpha-2 Country Code , e.g. ch */
+  std::optional<uint32_t> population{}; /**< Country population */
+};
 
 /**
  * CountryData hold the covid-19 data of a single country
  */
 struct CountryData
 {
-  // Clean Code Note: Write the understandble names use abbreviations only if
-  // commonly known
-  std::string name{};         /**< Country name */
-  std::string country_code{}; /**< Country Code , e.g. ch */
-  // Clean Code Note: By using the optional type we can handle the case with
-  // no value properly
-  std::optional<uint32_t> population{}; /**< Country population */
+
+  CountryInfo info{};
 
   // Clean Code Note: For consistency types should be named with Uppercase
   // CamelCase
@@ -70,12 +78,6 @@ struct CountryData
 
 struct CountryListObject
 {
-  struct CountryInfo
-  {
-    std::string name{}; /**< Country name */
-    std::string code{}; /**< Country Code , e.g. ch */
-  };
-
   std::vector<CountryInfo> countries{}; /**< array of available countries */
 };
 

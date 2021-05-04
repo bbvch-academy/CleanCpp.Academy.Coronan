@@ -133,46 +133,45 @@ constexpr auto parse_timeline = [](auto const& json_dom_object) {
 } // namespace
 
 // cppcheck-suppress unusedFunction
-// Justification: Is used
 CountryData parse_country(std::string const& json)
 {
   rapidjson::Document document;
   document.Parse<rapidjson::kParseFullPrecisionFlag>(json.c_str());
-  auto country_object = CountryData{};
+  auto country_data = CountryData{};
   if (document.HasMember("data"))
   {
     auto const country_data_object = document["data"].GetObject();
-    country_object.name = get_value<std::string>(country_data_object, "name");
-    country_object.country_code =
+    country_data.info.name =
+        get_value<std::string>(country_data_object, "name");
+    country_data.info.iso_code =
         get_value<std::string>(country_data_object, "code");
-    country_object.population =
+    country_data.info.population =
         get_value<uint32_t>(country_data_object, "population");
-    country_object.today = parse_today_data(country_data_object);
+    country_data.today = parse_today_data(country_data_object);
 
     auto const current_date =
         get_value<std::string>(country_data_object, "updated_at");
-    country_object.today.date = current_date;
-    country_object.latest = parse_latest_data(country_data_object);
-    country_object.latest.date = current_date;
-    country_object.timeline = parse_timeline(country_data_object);
+    country_data.today.date = current_date;
+    country_data.latest = parse_latest_data(country_data_object);
+    country_data.latest.date = current_date;
+    country_data.timeline = parse_timeline(country_data_object);
   }
-  return country_object;
+  return country_data;
 }
 // cppcheck-suppress unusedFunction
-// Justification: Is used
 CountryListObject parse_countries(std::string const& json)
 {
   rapidjson::Document document;
   document.Parse(json.c_str());
-  auto overview_object = CountryListObject{};
+  auto country_list = CountryListObject{};
   for (auto const& country_data : document["data"].GetArray())
   {
-    CountryListObject::CountryInfo country;
+    CountryInfo country;
     country.name = get_value<std::string>(country_data, "name");
-    country.code = get_value<std::string>(country_data, "code");
-    overview_object.countries.emplace_back(country);
+    country.iso_code = get_value<std::string>(country_data, "code");
+    country_list.countries.emplace_back(country);
   }
-  return overview_object;
+  return country_list;
 }
 
 } // namespace coronan::api_parser

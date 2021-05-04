@@ -23,9 +23,13 @@ int main(int argc, char* argv[])
     auto* const widget = new CoronanWidget();
     window.setCentralWidget(widget);
     return app.exec(); // NOLINT(readability-static-accessed-through-instance)
+    // Clean Code Note: Poco::Net::uninitializeSSL(); called in destructor of
+    // the CoronaAPIClient in the CoronanWidget
   }
+  // Clean Code Note: catch errors in right order and as const reference
   catch (coronan::HTTPClientException const& ex)
   {
+    // Clean Code Note: Log errors
     qCritical() << ex.what();
     QMessageBox::critical(&window, "Http Exception", QString{ex.what()});
     app.exit(EXIT_FAILURE);

@@ -11,31 +11,29 @@ namespace coronan {
 
 using SSLException = Poco::Net::SSLException;
 
-// Clean Code Note: Put the SSL initialisation adn uninitialize in proper RAII
-// class
+// Clean Code Note: Put the SSL initialisation and uninitialisation in proper
+// RAII class
 /**
  * An RAII wrapper to initialize & uninitialize the POCO::Net SSL stuff
  * (Poco::Net::initializeSSL())
  */
-class SSLInitializer
+class SSLClient
 {
 public:
-  using SSLInitializerPtr =
-      std::unique_ptr<SSLInitializer, std::function<void(SSLInitializer*)>>;
+  using SSLClientPtr =
+      std::unique_ptr<SSLClient, std::function<void(SSLClient*)>>;
   // Clean Code Note: Make explicite that the returning object must be used,
   // otherwise uninitialze happens
-  [[nodiscard]] static SSLInitializerPtr
-  initialize_with_accept_certificate_handler();
+  [[nodiscard]] static SSLClientPtr create_with_accept_certificate_handler();
 
 private:
-  explicit SSLInitializer(
-      Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> certificate_handler,
-      Poco::Net::Context::Ptr context);
+  explicit SSLClient(
+      Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> cert_handler,
+      Poco::Net::Context::Ptr net_context);
 
-  void initialize_client();
-  Poco::SharedPtr<Poco::Net::InvalidCertificateHandler>
-      certificate_handler_ptr{};
-  Poco::Net::Context::Ptr context_ptr;
+  void initialize();
+  Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> certificate_handler{};
+  Poco::Net::Context::Ptr context;
 };
 
 } // namespace coronan

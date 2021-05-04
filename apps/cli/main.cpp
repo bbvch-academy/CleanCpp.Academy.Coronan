@@ -20,16 +20,12 @@ int main(int argc, char* argv[])
     {
       fmt::print(stderr, "Error in comman line: {}\n", result.errorMessage());
       fmt::print("{}\n", usage.str());
-      // Poco::Net::uninitializeSSL();
-      // Clean Code Note: Was forgotten
       exit(EXIT_FAILURE);
     }
 
     if (help_request)
     {
       fmt::print("{}\n", usage.str());
-      // Poco::Net::uninitializeSSL();
-      // Clean Code Note: Was forgotten
       exit(EXIT_SUCCESS);
     }
 
@@ -53,9 +49,10 @@ int main(int argc, char* argv[])
                  optional_to_string(data_point.active));
     }
   }
+  // Clean Code Note: catch errors in right order and as const reference
   catch (coronan::SSLException const& ex)
   {
-
+    // Clean Code Note: Log errors
     fmt::print(stderr, "SSL Exception: {}\n", ex.what());
     exit(EXIT_FAILURE);
   }
@@ -69,7 +66,7 @@ int main(int argc, char* argv[])
     fmt::print(stderr, "{}\n", ex.what());
     exit(EXIT_FAILURE);
   }
-  // Poco::Net::uninitializeSSL(); called in destructor of the static
-  // ssl_initializer_handler
+  // Clean Code Note: Poco::Net::uninitializeSSL(); called in destructor of the
+  // CoronaAPIClient
   exit(EXIT_SUCCESS);
 }

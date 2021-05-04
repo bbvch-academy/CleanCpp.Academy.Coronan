@@ -42,7 +42,7 @@ constexpr auto update_country_overview_table = [](auto* table,
   using CaptionValuePair = std::pair<QString, VariantT>;
   constexpr auto no_table_entries = 7;
   std::array<CaptionValuePair, no_table_entries> const overview_table_entries =
-      {{std::make_pair("Population:", country_data.population),
+      {{std::make_pair("Population:", country_data.info.population),
         std::make_pair("Confirmed:", country_data.latest.confirmed),
         std::make_pair("Death:", country_data.latest.deaths),
         std::make_pair("Recovered:", country_data.latest.recovered),
@@ -77,16 +77,16 @@ constexpr auto create_line_chart =
       auto* const chart = new QChart{};
 
       chart->setTitle(QString{"Corona (Covid-19) Cases in "}.append(
-          country_data.name.c_str()));
+          country_data.info.name.c_str()));
 
-      auto* const death_serie = new QLineSeries{};
-      death_serie->setName("Death");
-      auto* const confirmed_serie = new QLineSeries{};
-      confirmed_serie->setName("Confirmed");
-      auto* const active_serie = new QLineSeries{};
-      active_serie->setName("Active");
-      auto* const recovered_serie = new QLineSeries{};
-      recovered_serie->setName("Recovered");
+      auto* const death_series = new QLineSeries{};
+      death_series->setName("Death");
+      auto* const confirmed_series = new QLineSeries{};
+      confirmed_series->setName("Confirmed");
+      auto* const active_series = new QLineSeries{};
+      active_series->setName("Active");
+      auto* const recovered_series = new QLineSeries{};
+      recovered_series->setName("Recovered");
 
       for (auto const& data_point : country_data.timeline)
       {
@@ -95,7 +95,7 @@ constexpr auto create_line_chart =
         auto const msecs_since_epoche =
             static_cast<double>(date.toMSecsSinceEpoch());
 
-        auto const append_value_to_serie =
+        auto const append_value_to_series =
             [msecs_since_epoche](auto const& value, auto* const serie) {
               if (value.has_value())
               {
@@ -103,10 +103,10 @@ constexpr auto create_line_chart =
               }
             };
 
-        append_value_to_serie(data_point.deaths, death_serie);
-        append_value_to_serie(data_point.confirmed, confirmed_serie);
-        append_value_to_serie(data_point.active, active_serie);
-        append_value_to_serie(data_point.recovered, recovered_serie);
+        append_value_to_series(data_point.deaths, death_series);
+        append_value_to_series(data_point.confirmed, confirmed_series);
+        append_value_to_series(data_point.active, active_series);
+        append_value_to_series(data_point.recovered, recovered_series);
       }
 
       auto* const axisX = new QDateTimeAxis{};
@@ -120,17 +120,17 @@ constexpr auto create_line_chart =
 
       auto const max_cases = country_data.latest.confirmed.value_or(0);
       axisY->setRange(0, max_cases);
-      axisY->setLinePenColor(confirmed_serie->pen().color());
-      axisY->setLabelsColor(confirmed_serie->pen().color());
-      axisY->setGridLineColor(confirmed_serie->pen().color());
+      axisY->setLinePenColor(confirmed_series->pen().color());
+      axisY->setLabelsColor(confirmed_series->pen().color());
+      axisY->setGridLineColor(confirmed_series->pen().color());
       chart->addAxis(axisY, Qt::AlignLeft);
 
-      for (auto* const serie : std::vector<QLineSeries*>{
-               death_serie, confirmed_serie, active_serie, recovered_serie})
+      for (auto* const series : std::vector<QLineSeries*>{
+               death_series, confirmed_series, active_series, recovered_series})
       {
-        chart->addSeries(serie);
-        serie->attachAxis(axisX);
-        serie->attachAxis(axisY);
+        chart->addSeries(series);
+        series->attachAxis(axisX);
+        series->attachAxis(axisY);
       }
 
       chart->setTheme(QChart::ChartThemeDark);
@@ -172,7 +172,7 @@ void CoronanWidget::populate_country_box()
 
   for (auto const& country : countries)
   {
-    country_combo->addItem(country.name.c_str(), country.code.c_str());
+    country_combo->addItem(country.name.c_str(), country.iso_code.c_str());
   }
   if (int const index = country_combo->findData("CH"); index != -1)
   { // -1 for not found
