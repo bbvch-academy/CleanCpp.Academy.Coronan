@@ -13,13 +13,6 @@ namespace coronan {
 namespace {
 constexpr auto corona_api_url = "https://corona-api.com";
 }
-
-struct Country
-{
-  std::string name{}; /**< Country name */
-  std::string code{}; /**< Country Code , e.g. ch */
-};
-
 template <typename ClientT> class CoronaAPIClientT
 {
 public:
@@ -42,23 +35,15 @@ public:
       nullptr, certificate_handler_ptr, context_ptr);
 
 */
-  std::vector<Country> get_countries() const
+  std::vector<CountryListObject::CountryInfo> get_countries() const
   {
     auto const countries_url = api_url + std::string{"/countries"};
     if (auto const http_response = ClientT::get(countries_url);
         http_response.get_status() == Poco::Net::HTTPResponse::HTTP_OK)
     {
-      auto const country_list = coronan::api_parser::parse_countries(
-                                    http_response.get_response_body())
-                                    .countries;
-      std::vector<Country> countries;
-
-      std::transform(std::begin(country_list), std::end(country_list),
-                     std::back_inserter(countries), [](auto const& country) {
-                       return Country{country.name, country.code};
-                     });
-
-      return countries;
+      return coronan::api_parser::parse_countries(
+                 http_response.get_response_body())
+          .countries;
     }
     else
     {
@@ -71,7 +56,7 @@ public:
     }
   }
 
-  CountryObject get_country_data(std::string const& country_code) const
+  CountryData get_country_data(std::string const& country_code) const
   {
     auto const countries_url =
         api_url + std::string{"/countries/"} + country_code;

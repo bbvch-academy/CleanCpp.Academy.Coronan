@@ -73,7 +73,7 @@ constexpr auto update_country_overview_table = [](auto* table,
 };
 
 constexpr auto create_line_chart =
-    [](coronan::CountryObject const& country_data) {
+    [](coronan::CountryData const& country_data) {
       auto* const chart = new QChart{};
 
       chart->setTitle(QString{"Corona (Covid-19) Cases in "}.append(
@@ -180,7 +180,7 @@ void CoronanWidget::populate_country_box()
   }
 }
 
-coronan::CountryObject
+coronan::CountryData
 CoronanWidget::get_country_data(std::string const& country_code)
 {
   try

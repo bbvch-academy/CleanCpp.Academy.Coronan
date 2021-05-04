@@ -74,7 +74,7 @@ Ret_T get_value(DOM_T const& json_dom_object, std::string const& name)
 // according Core guidelines F.50 a function would be prefered over an lambda
 // however auto is not supported in all compilers for functions yet.
 constexpr auto parse_today_data = [](auto const& json_dom_object) {
-  CountryObject::Today today{};
+  CountryData::TodayData today{};
   if (json_dom_object.HasMember("today"))
   {
     auto const today_object = json_dom_object["today"].GetObject();
@@ -85,7 +85,7 @@ constexpr auto parse_today_data = [](auto const& json_dom_object) {
 };
 
 constexpr auto parse_latest_data = [](auto const& json_dom_object) {
-  CountryObject::Latest latest{};
+  CountryData::LatestData latest{};
   if (json_dom_object.HasMember("latest_data"))
   {
     auto const latest_data = json_dom_object["latest_data"].GetObject();
@@ -108,12 +108,12 @@ constexpr auto parse_latest_data = [](auto const& json_dom_object) {
 };
 
 constexpr auto parse_timeline = [](auto const& json_dom_object) {
-  std::vector<CountryObject::Timeline> timeline;
+  std::vector<CountryData::TimelineData> timeline;
   if (json_dom_object.HasMember("timeline"))
   {
     for (auto const& data_point : json_dom_object["timeline"].GetArray())
     {
-      CountryObject::Timeline timepoint;
+      CountryData::TimelineData timepoint;
       timepoint.date = get_value<std::string>(data_point, "updated_at");
       timepoint.deaths = get_value<uint32_t>(data_point, "deaths");
       timepoint.confirmed = get_value<uint32_t>(data_point, "confirmed");
@@ -134,11 +134,11 @@ constexpr auto parse_timeline = [](auto const& json_dom_object) {
 
 // cppcheck-suppress unusedFunction
 // Justification: Is used
-CountryObject parse_country(std::string const& json)
+CountryData parse_country(std::string const& json)
 {
   rapidjson::Document document;
   document.Parse<rapidjson::kParseFullPrecisionFlag>(json.c_str());
-  auto country_object = CountryObject{};
+  auto country_object = CountryData{};
   if (document.HasMember("data"))
   {
     auto const country_data_object = document["data"].GetObject();
@@ -167,7 +167,7 @@ CountryListObject parse_countries(std::string const& json)
   auto overview_object = CountryListObject{};
   for (auto const& country_data : document["data"].GetArray())
   {
-    CountryListObject::country_t country;
+    CountryListObject::CountryInfo country;
     country.name = get_value<std::string>(country_data, "name");
     country.code = get_value<std::string>(country_data, "code");
     overview_object.countries.emplace_back(country);

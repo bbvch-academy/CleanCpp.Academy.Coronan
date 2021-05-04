@@ -7,9 +7,9 @@
 namespace coronan {
 
 /**
- * CountryObject hold the covid-19 data of a single country
+ * CountryData hold the covid-19 data of a single country
  */
-struct CountryObject
+struct CountryData
 {
   // Clean Code Note: Write the understandble names use abbreviations only if
   // commonly known
@@ -21,16 +21,17 @@ struct CountryObject
 
   // Clean Code Note: For consistency types should be named with Uppercase
   // CamelCase
-  struct Today
+  struct TodayData
   {
     std::string date{};                  /**< iso date string */
     std::optional<uint32_t> deaths{};    /**< todays death cased */
     std::optional<uint32_t> confirmed{}; /**< todays confirmed cases */
   };
 
-  Today today{}; /**< Todays data when retrieved. New cases of lates date  */
+  TodayData
+      today{}; /**< TodayDatas data when retrieved. New cases of lates date  */
 
-  struct Latest
+  struct LatestData
   {
     std::string date{};               /**< iso date string (last updated) */
     std::optional<uint32_t> deaths{}; /**< latest number of deaths */
@@ -48,9 +49,9 @@ struct CountryObject
                        per millions of the population */
   };
 
-  Latest latest{}; /**< Lates actual cases  */
+  LatestData latest{}; /**< Lates actual cases  */
 
-  struct Timeline
+  struct TimelineData
   {
     std::string date{};                  /**< iso date string  */
     std::optional<uint32_t> deaths{};    /**< number of deaths */
@@ -64,18 +65,18 @@ struct CountryObject
         new_recovered{}; /**< new recovered cases since last time data */
   };
 
-  std::vector<Timeline> timeline{}; /**< array of (daily) data */
+  std::vector<TimelineData> timeline{}; /**< array of (daily) data */
 };
 
 struct CountryListObject
 {
-  struct country_t
+  struct CountryInfo
   {
     std::string name{}; /**< Country name */
     std::string code{}; /**< Country Code , e.g. ch */
   };
 
-  std::vector<country_t> countries{}; /**< array of available countries */
+  std::vector<CountryInfo> countries{}; /**< array of available countries */
 };
 
 namespace api_parser {
@@ -89,7 +90,7 @@ namespace api_parser {
  * @note Must have the format as described at
  * https://about-corona.net/documentation
  */
-CountryObject parse_country(std::string const& json);
+CountryData parse_country(std::string const& json);
 
 /**
  * Parse countries information
