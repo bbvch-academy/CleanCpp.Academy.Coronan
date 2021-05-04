@@ -2,44 +2,61 @@
 language: cpp
 os: linux
 dist: bionic
-
-services:
-    - docker
-
-cache: # see https://docs.travis-ci.com/user/caching/
+cache:
     - directories:
-          - $HOME/.cache
-
-env:
-    matrix:
-        - DOCKER_IMAGE=bbvch/conan_qt-5.14.2_builder_gcc7 COVERAGE=1 BUILD_TYPE=Debug
-        - DOCKER_IMAGE=bbvch/conan_qt-5.14.2_builder_gcc8 COVERAGE=0 BUILD_TYPE=Debug
-        - DOCKER_IMAGE=bbvch/conan_qt-5.14.2_builder_gcc9 COVERAGE=0 BUILD_TYPE=Debug
-        - DOCKER_IMAGE=bbvch/conan_qt-5.14.2_builder_clang50 COVERAGE=0 BUILD_TYPE=Debug
-        - DOCKER_IMAGE=bbvch/conan_qt-5.14.2_builder_clang60 COVERAGE=0 BUILD_TYPE=Debug
-        - DOCKER_IMAGE=bbvch/conan_qt-5.14.2_builder_clang7 COVERAGE=0 BUILD_TYPE=Debug
-        - DOCKER_IMAGE=bbvch/conan_qt-5.14.2_builder_clang8 COVERAGE=0 BUILD_TYPE=Debug
-        - DOCKER_IMAGE=bbvch/conan_qt-5.14.2_builder_clang9 COVERAGE=0 BUILD_TYPE=Release
-
+          - $HOME/.ccache
+          - $HOME/.conan
+          - $HOME/.conan-clang11
 notifications:
     email:
         recipients:
             - michel.estermann@bbv.ch
         on_success: change
         on_failure: always
-
-before_install:
-    - DOCKER_WORKDIR="/workspace"
-    - CONAN_UPDATE_CMD="pip3 install --upgrade conan"
-    - docker pull ${DOCKER_IMAGE}
-    - BUILD_CMD="./build.sh -i build"
-    - COVERAGE_FILE="coverage.info"
-    - touch ${COVERAGE_FILE}
-    - if [ "${COVERAGE}" == '1' ] ; then BUILD_CMD="./build.sh -i --cov ${COVERAGE_FILE} build" ; fi
-    - if [ "${BUILD_TYPE}" == 'Release' ] ; then BUILD_CMD="./build.sh -i -r build" ; fi
-
-script: docker run -t -v ${TRAVIS_BUILD_DIR}:${DOCKER_WORKDIR} -w ${DOCKER_WORKDIR} ${DOCKER_IMAGE} /bin/bash -c "${CONAN_UPDATE_CMD} && ${BUILD_CMD}"
-
-after_success:
-    - if [ "${COVERAGE}" = '1' ] ; then bash <(curl -s https://codecov.io/bash) -f ${COVERAGE_FILE} || echo 'Codecov did not collect coverage reports' ;
-      fi
+jobs:
+    include:
+        - os: osx
+          compiler: clang
+          osx_image: xcode11.2
+          addons:
+              homebrew:
+                  packages:
+                      - qt
+                  update: false
+          install:
+              - python3 -m pip install --upgrade pip setuptools
+              - python3 -m pip install conan cmake
+              - conan --version
+          before_script:
+              - export Qt5_DIR=/usr/local/opt/qt/lib/cmake
+              - cmake -S . -B ./build -G"Unix Makefiles" -DENABLE_TESTING=ON -DCMAKE_BUILD_TYPE=Release
+          script:
+              - cmake --build ./build -- -j16
+              - (cd ./build && ctest -j2)
+        - os: linux
+          dist: focal
+          compiler: gcc
+          addons:
+              apt:
+                  sources:
+                      - sourceline: ppa:beineri/opt-qt-5.15.2-focal
+                  update: true
+                  packages:
+                      - ninja-build
+                      - qt515base
+                      - qt515charts-no-lgpl
+                      - qt515tools
+                      - libc6-dev
+                      - libgl-dev
+                      - libgl1-mesa-dev
+                      - mesa-common-dev
+          install:
+              - python3 -m pip install --upgrade pip setuptools
+              - python3 -m pip install conan cmake
+              - conan --version
+          before_script:
+              - /opt/qt515/bin/qt515-env.sh
+              - cmake -S . -B ./build -G"Ninja" -DCMAKE_BUILD_TYPE=Release
+          script:
+              - cmake --build ./build -- -j16
+              - (cd ./build && ctest -j2)
