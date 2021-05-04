@@ -1,4 +1,8 @@
-[![CI](https://github.com/bbvch-academy/CleanCpp.Academy.Coronan/actions/workflows/ci.yml/badge.svg)](https://github.com/bbvch-academy/CleanCpp.Academy.Coronan/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/bbvch-academy/CleanCpp.Academy.Coronan/actions/workflows/ci.yml/badge.svg)](https://github.com/bbvch-academy/CleanCpp.Academy.Coronan/actions/workflows/ci.yml)
+[![Build Status](https://travis-ci.org/bbvch-academy/CleanCpp.Academy.Coronan.svg?branch=master)](https://travis-ci.org/bbvch-academy/CleanCpp.Academy.Coronan)
+[![Build status](https://ci.appveyor.com/api/projects/status/gqqlo64h52e3eaml/branch/master?svg=true)](https://ci.appveyor.com/project/meshell/cleancpp-academy-coronan/branch/master)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/bbvch-academy/CleanCpp.Academy.Coronan)
 
