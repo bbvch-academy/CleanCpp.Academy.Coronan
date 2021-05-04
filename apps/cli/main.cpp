@@ -38,16 +38,19 @@ int main(int argc, char* argv[])
     fmt::print("\"datetime\", \"confirmed\", \"death\", \"recovered\", "
                "\"active\"\n");
 
+    constexpr auto optional_to_string = [](auto const& value) {
+      return value.has_value() ? std::to_string(value.value()) : "--";
+    };
+
     // Clean Code Note: Range based for loop is much less verbose and clearer
     // to understand
     for (auto const& data_point : country_data.timeline)
     {
-      fmt::print("{date}, {confirmed}, {deaths}, {recovered}, {active}\n",
-                 fmt::arg("date", data_point.date),
-                 fmt::arg("confirmed", data_point.confirmed.value_or(0)),
-                 fmt::arg("deaths", data_point.deaths.value_or(0)),
-                 fmt::arg("recovered", data_point.recovered.value_or(0)),
-                 fmt::arg("active", data_point.active.value_or(0)));
+      fmt::print("{}, {}, {}, {}, {}\n", data_point.date,
+                 optional_to_string(data_point.confirmed),
+                 optional_to_string(data_point.deaths),
+                 optional_to_string(data_point.recovered),
+                 optional_to_string(data_point.active));
     }
   }
   catch (coronan::SSLException const& ex)
