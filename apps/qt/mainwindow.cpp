@@ -189,17 +189,18 @@ CoronanWidget::get_country_data(std::string const& country_code)
   }
   catch (coronan::SSLException const& ex)
   {
-    QMessageBox::warning(this, "SSL Exception",
-                         QString::fromStdString(ex.displayText()));
+    qWarning() << ex.what();
+    QMessageBox::warning(this, "SSL Exception", QString{ex.what()});
   }
   catch (coronan::HTTPClientException const& ex)
   {
-    QMessageBox::warning(this, "HTTP Client Exception",
-                         QString::fromStdString(ex.what()));
+    qWarning() << ex.what();
+    QMessageBox::warning(this, "HTTP Client Exception", QString{ex.what()});
   }
   catch (std::exception const& ex)
   {
-    QMessageBox::warning(this, "Exception", QString::fromStdString(ex.what()));
+    qWarning() << ex.what();
+    QMessageBox::warning(this, "Exception", QString{ex.what()});
   }
   return {};
 }

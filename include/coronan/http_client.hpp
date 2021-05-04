@@ -4,9 +4,11 @@
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
 #include <Poco/Net/HTTPSClientSession.h>
+#include <Poco/Net/NetException.h>
 #include <Poco/Path.h>
 #include <Poco/StreamCopier.h>
 #include <Poco/URI.h>
+#include <stdexcept>
 #include <string>
 
 namespace coronan {
@@ -90,6 +92,13 @@ template <typename SessionT, typename HTTPRequestT> struct HTTPClientT
       }();
 
       return HTTPResponse{response, response_content};
+    }
+    catch (Poco::Net::NetException const& ex)
+    {
+      auto const exception_msg =
+          std::string{"Error fetching url \""} + url +
+          std::string{"\".\n\n Net Exception occured: "} + ex.what();
+      throw HTTPClientException{exception_msg};
     }
     catch (std::exception const& ex)
     {

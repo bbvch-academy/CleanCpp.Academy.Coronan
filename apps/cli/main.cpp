@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
   catch (coronan::SSLException const& ex)
   {
 
-    fmt::print(stderr, "SSL Exception: {}\n", ex.displayText());
+    fmt::print(stderr, "SSL Exception: {}\n", ex.what());
     exit(EXIT_FAILURE);
   }
   catch (coronan::HTTPClientException const& ex)

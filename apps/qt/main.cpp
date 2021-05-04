@@ -1,3 +1,5 @@
+#include "coronan/corona-api_client.hpp"
+#include "coronan/http_client.hpp"
 #include "coronan/ssl_initializer.hpp"
 #include "mainwindow.h"
 
@@ -22,12 +24,22 @@ int main(int argc, char* argv[])
     window.setCentralWidget(widget);
     return app.exec(); // NOLINT(readability-static-accessed-through-instance)
   }
+  catch (coronan::HTTPClientException const& ex)
+  {
+    qCritical() << ex.what();
+    QMessageBox::critical(&window, "Http Exception", QString{ex.what()});
+    app.exit(EXIT_FAILURE);
+  }
+  catch (coronan::SSLException const& ex)
+  {
+    qCritical() << ex.what();
+    QMessageBox::critical(&window, "SSL Exception", QString{ex.what()});
+    app.exit(EXIT_FAILURE);
+  }
   catch (std::exception const& ex)
   {
-    const auto error_msg =
-        QString{"%1.\n"}.arg(QString::fromStdString(ex.what()));
-    qCritical() << error_msg;
-    QMessageBox::critical(&window, "Error", error_msg);
+    qCritical() << ex.what();
+    QMessageBox::critical(&window, "Exception", QString{ex.what()});
     app.exit(EXIT_FAILURE);
   }
 }
