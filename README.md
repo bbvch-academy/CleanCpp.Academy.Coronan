@@ -1,4 +1,4 @@
-[![CI](https://github.com/bbvch-academy/CleanCpp.Academy.Coronan/actions/workflows/ci.yml/badge.svg?branch=refactored)](https://github.com/bbvch-academy/CleanCpp.Academy.Coronan/actions/workflows/ci.yml) 
+[![CI](https://github.com/bbvch-academy/CleanCpp.Academy.Coronan/actions/workflows/ci.yml/badge.svg?branch=refactored)](https://github.com/bbvch-academy/CleanCpp.Academy.Coronan/actions/workflows/ci.yml)
 [![Build Status](https://travis-ci.org/bbvch-academy/CleanCpp.Academy.Coronan.svg?branch=refactored)](https://travis-ci.org/bbvch-academy/CleanCpp.Academy.Coronan)
 [![Build status](https://ci.appveyor.com/api/projects/status/gqqlo64h52e3eaml/branch/refactored?svg=true)](https://ci.appveyor.com/project/meshell/cleancpp-academy-coronan/branch/refactored)
 

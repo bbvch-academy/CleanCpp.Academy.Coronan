@@ -24,7 +24,7 @@ target_sources(
   ${PROJECT_NAME}
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/corona-api_parser.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/ssl_initializer.cpp
-          ${CMAKE_CURRENT_SOURCE_DIR}/http_client.cpp ${HEADER_LIST})
+          ${CMAKE_CURRENT_SOURCE_DIR}/http_client.cpp)
 
 target_link_libraries(
   ${PROJECT_NAME}
