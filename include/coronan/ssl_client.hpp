@@ -17,14 +17,13 @@ using SSLException = Poco::Net::SSLException;
  * An RAII wrapper to initialize & uninitialize the POCO::Net SSL stuff
  * (Poco::Net::initializeSSL())
  */
-class SSLClient
+class SSLClient final
 {
 public:
-  using SSLClientPtr =
-      std::unique_ptr<SSLClient, std::function<void(SSLClient*)>>;
+  ~SSLClient();
   // Clean Code Note: Make explicite that the returning object must be used,
   // otherwise uninitialze happens
-  [[nodiscard]] static SSLClientPtr create_with_accept_certificate_handler();
+  [[nodiscard]] static SSLClient create_with_accept_certificate_handler();
 
 private:
   explicit SSLClient(

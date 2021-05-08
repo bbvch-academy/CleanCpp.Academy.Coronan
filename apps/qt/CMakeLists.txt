@@ -56,7 +56,7 @@ target_link_libraries(
   PRIVATE coronan::compile_options)
 
 include(StaticAnalyzers)
-# enable_static_analysis(${PROJECT_NAME})
+enable_static_analysis(${PROJECT_NAME})
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)

@@ -1,5 +1,5 @@
 #include "coronan/http_client.hpp"
-#include "coronan/ssl_initializer.hpp"
+#include "coronan/ssl_client.hpp"
 #include "mainwindow.h"
 
 #include <QDebug>

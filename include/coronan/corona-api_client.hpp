@@ -2,7 +2,7 @@
 
 #include "coronan/corona-api_parser.hpp"
 #include "coronan/http_client.hpp"
-#include "coronan/ssl_initializer.hpp"
+#include "coronan/ssl_client.hpp"
 
 #include <algorithm>
 #include <string>
@@ -28,8 +28,7 @@ public:
 
 private:
   std::string const api_url = corona_api_url;
-  SSLClient::SSLClientPtr ssl =
-      SSLClient::create_with_accept_certificate_handler();
+  SSLClient ssl = SSLClient::create_with_accept_certificate_handler();
 };
 
 // Clean Code Note: Define a type which is easier to use in applications (no
