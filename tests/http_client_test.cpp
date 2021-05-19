@@ -103,9 +103,9 @@ TEST_CASE("HTTPClient get", "[HTTPClient]")
     auto const* uri = "http://server.com:80/test";
     auto resonse = TesteeT::get(uri);
 
-    REQUIRE(resonse.get_status() == expected_status);
-    REQUIRE(resonse.get_reason() == expected_reason);
-    REQUIRE(resonse.get_response_body() == expected_response);
+    REQUIRE(resonse.status() == expected_status);
+    REQUIRE(resonse.reason() == expected_reason);
+    REQUIRE(resonse.response_body() == expected_response);
   }
 }
 

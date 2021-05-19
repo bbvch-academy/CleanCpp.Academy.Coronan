@@ -39,17 +39,17 @@ public:
   /**
    * Return the HTTP status code
    */
-  Poco::Net::HTTPResponse::HTTPStatus get_status() const;
+  Poco::Net::HTTPResponse::HTTPStatus status() const;
 
   /**
    * Return the HTTP reason phrase
    */
-  std::string get_reason() const;
+  std::string reason() const;
 
   /**
    * Return the HTTP response body
    */
-  std::string get_response_body() const;
+  std::string response_body() const;
 
 private:
   Poco::Net::HTTPResponse response_{};
@@ -59,7 +59,8 @@ private:
 /**
  * Simple Stateless HTTP Client
  */
-template <typename SessionT, typename HTTPRequestT, typename HTTPResponseT> struct HTTPClientT
+template <typename SessionT, typename HTTPRequestT, typename HTTPResponseT>
+struct HTTPClientT
 {
   /**
    * Execute a HTTP GET
@@ -73,7 +74,7 @@ HTTPResponse HTTPClientT<SessionT, HTTPRequestT, HTTPResponseT>::get(std::string
 {
   try
   {
-    Poco::URI uri{url};
+    Poco::URI const uri{url};
     SessionT session(uri.getHost(), uri.getPort());
 
     auto const path = [uri]() {

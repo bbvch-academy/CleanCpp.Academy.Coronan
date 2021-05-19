@@ -1,36 +1,12 @@
 
 #include "coronan/ssl_client.hpp"
 
+#include "coronan/ssl_context.hpp"
+
 #include <Poco/Net/AcceptCertificateHandler.h>
 #include <Poco/Net/SSLManager.h>
 
-namespace {
-using Poco::Net::Context;
-
-constexpr auto ca_location = "";
-constexpr auto verification_mode = Context::VERIFY_RELAXED;
-
-#ifdef WIN32
-constexpr auto create_NetSSL_context = []() {
-  return Context::Ptr{new Context{Context::TLS_CLIENT_USE, ca_location, verification_mode}};
-};
-#else
-constexpr auto private_key_file = "";
-constexpr auto certificate_file = "";
-constexpr auto verification_depth = 9;
-constexpr auto load_default_cas = false;
-constexpr auto cipher_list = "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH";
-
-constexpr auto create_NetSSL_context = []() {
-  return Context::Ptr{new Context{Context::TLS_CLIENT_USE, private_key_file, certificate_file, ca_location,
-                                  verification_mode, verification_depth, load_default_cas, cipher_list}};
-};
-#endif // WIN32
-} // namespace
-
 namespace coronan {
-
-using Poco::Net::Context;
 
 SSLClient::SSLClient(Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> cert_handler,
                      Poco::Net::Context::Ptr net_context)
@@ -58,7 +34,7 @@ SSLClient::create_with_accept_certificate_handler()
   Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> cert_handler =
       new Poco::Net::AcceptCertificateHandler{handle_errors_on_server_side};
 
-  auto ssl_client = SSLClient{std::move(cert_handler), create_NetSSL_context()};
+  auto ssl_client = SSLClient{std::move(cert_handler), coronan::ssl_context::create_NetSSL_context()};
 
   ssl_client.initialize();
   return ssl_client;

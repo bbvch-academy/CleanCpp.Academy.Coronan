@@ -30,7 +30,7 @@ CoronanWidget::~CoronanWidget()
 void CoronanWidget::populate_country_box()
 {
   auto* country_combo = ui->countryComboBox;
-  auto countries = coronan::CoronaAPIClient{}.get_countries();
+  auto countries = coronan::CoronaAPIClient{}.request_countries();
 
   std::sort(begin(countries), end(countries), [](auto const& a, auto const& b) { return a.name < b.name; });
 
@@ -44,11 +44,11 @@ void CoronanWidget::populate_country_box()
   }
 }
 
-coronan::CountryData CoronanWidget::get_country_data(std::string const& country_code)
+coronan::CountryData CoronanWidget::request_country_data(std::string const& country_code)
 {
   try
   {
-    return coronan::CoronaAPIClient{}.get_country_data(country_code);
+    return coronan::CoronaAPIClient{}.request_country_data(country_code);
   }
   catch (coronan::SSLException const& ex)
   {
@@ -71,7 +71,7 @@ coronan::CountryData CoronanWidget::get_country_data(std::string const& country_
 void CoronanWidget::update_ui()
 {
   auto country_code = ui->countryComboBox->itemData(ui->countryComboBox->currentIndex()).toString();
-  auto const country_data = get_country_data(country_code.toStdString());
+  auto const country_data = request_country_data(country_code.toStdString());
   auto* const new_chartView = new coronan_gui::CountryChartView{country_data};
   if (chartView == nullptr)
   {

@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 
   try
   {
-    auto const country_data = coronan::CoronaAPIClient{}.get_country_data(country_code);
+    auto const country_data = coronan::CoronaAPIClient{}.request_country_data(country_code);
     print_data(country_data);
   }
   // Clean Code Note: catch errors in right order and as const reference
