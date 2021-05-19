@@ -183,8 +183,7 @@ TEST_CASE("The corona-api parser parsing a json", "[corona-api parser")
     REQUIRE_FALSE(json_object.latest.cases_per_million_population.has_value());
   }
 
-  SECTION(
-      "with missing updated_at and latest_data return empty latest_data date")
+  SECTION("with missing updated_at and latest_data return empty latest_data date")
   {
     constexpr auto test_json = "{ \
             \"data\": { \
@@ -255,8 +254,7 @@ TEST_CASE("The corona-api country parser", "[corona-api parser")
     ] \
 }";
 
-  auto json_overview_object =
-      coronan::api_parser::parse_countries(test_country_json);
+  auto json_overview_object = coronan::api_parser::parse_countries(test_country_json);
   SECTION("returns the country data")
   {
     REQUIRE(json_overview_object.countries[0].name == "Austria");

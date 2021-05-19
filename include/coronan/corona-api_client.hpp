@@ -14,8 +14,7 @@ namespace {
 constexpr auto corona_api_url = "https://corona-api.com";
 }
 
-using HTTPClient = HTTPClientT<Poco::Net::HTTPSClientSession,
-                               Poco::Net::HTTPRequest, Poco::Net::HTTPResponse>;
+using HTTPClient = HTTPClientT<Poco::Net::HTTPSClientSession, Poco::Net::HTTPRequest, Poco::Net::HTTPResponse>;
 
 // Clean Code Note: Having a dedicated class remived duplication in the two apps
 // (cli & Qt aa) using the data Templated to have Compile time polymorphism and
@@ -38,48 +37,38 @@ using CoronaAPIClient = CoronaAPIClientT<HTTPClient>;
 // Clean Code Note: Definitions moved down to make the API declaration (above)
 // easier to read
 
-template <typename ClientT>
-std::vector<CountryInfo> CoronaAPIClientT<ClientT>::get_countries() const
+template <typename ClientT> std::vector<CountryInfo> CoronaAPIClientT<ClientT>::get_countries() const
 {
   auto const countries_url = api_url + std::string{"/countries"};
   if (auto const http_response = ClientT::get(countries_url);
       http_response.get_status() == Poco::Net::HTTPResponse::HTTP_OK)
   {
-    return coronan::api_parser::parse_countries(
-               http_response.get_response_body())
-        .countries;
+    return coronan::api_parser::parse_countries(http_response.get_response_body()).countries;
   }
   else
   {
-    auto const exception_msg =
-        std::string{"Error fetching data from url \""} + countries_url +
-        std::string{"\".\n\n Response status: "} + http_response.get_reason() +
-        std::string{" ("} + std::to_string(http_response.get_status()) +
-        std::string{")."};
+    auto const exception_msg = std::string{"Error fetching data from url \""} + countries_url +
+                               std::string{"\".\n\n Response status: "} + http_response.get_reason() +
+                               std::string{" ("} + std::to_string(http_response.get_status()) + std::string{")."};
     throw HTTPClientException{exception_msg};
   }
 }
 
 template <typename ClientT>
-CountryData CoronaAPIClientT<ClientT>::get_country_data(
-    std::string const& country_code) const
+CountryData CoronaAPIClientT<ClientT>::get_country_data(std::string const& country_code) const
 {
-  auto const countries_url =
-      api_url + std::string{"/countries/"} + country_code;
+  auto const countries_url = api_url + std::string{"/countries/"} + country_code;
   if (auto const http_response = ClientT::get(countries_url);
       http_response.get_status() == Poco::Net::HTTPResponse::HTTP_OK)
 
   {
-    return coronan::api_parser::parse_country(
-        http_response.get_response_body());
+    return coronan::api_parser::parse_country(http_response.get_response_body());
   }
   else
   {
-    auto const exception_msg =
-        std::string{"Error fetching data from url \""} + countries_url +
-        std::string{"\".\n\n Response status: "} + http_response.get_reason() +
-        std::string{" ("} + std::to_string(http_response.get_status()) +
-        std::string{")."};
+    auto const exception_msg = std::string{"Error fetching data from url \""} + countries_url +
+                               std::string{"\".\n\n Response status: "} + http_response.get_reason() +
+                               std::string{" ("} + std::to_string(http_response.get_status()) + std::string{")."};
     throw HTTPClientException{exception_msg};
   }
 }

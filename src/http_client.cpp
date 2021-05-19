@@ -2,15 +2,16 @@
 
 namespace coronan {
 
-HTTPClientException::HTTPClientException(std::string const& exception_msg)
-    : msg{exception_msg}
+HTTPClientException::HTTPClientException(std::string const& exception_msg) : msg{exception_msg}
 {
 }
 
-char const* HTTPClientException::what() const noexcept { return msg.c_str(); }
+char const* HTTPClientException::what() const noexcept
+{
+  return msg.c_str();
+}
 
-HTTPResponse::HTTPResponse(Poco::Net::HTTPResponse const& response,
-                           std::string const& response_body)
+HTTPResponse::HTTPResponse(Poco::Net::HTTPResponse const& response, std::string const& response_body)
     : response_{response}, response_body_{response_body}
 {
 }
@@ -23,9 +24,15 @@ HTTPResponse::get_status() const
 }
 
 // cppcheck-suppress unusedFunction
-std::string HTTPResponse::get_reason() const { return response_.getReason(); }
+std::string HTTPResponse::get_reason() const
+{
+  return response_.getReason();
+}
 
 // cppcheck-suppress unusedFunction
-std::string HTTPResponse::get_response_body() const { return response_body_; }
+std::string HTTPResponse::get_response_body() const
+{
+  return response_body_;
+}
 
 } // namespace coronan

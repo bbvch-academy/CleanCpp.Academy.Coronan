@@ -26,9 +26,8 @@ public:
   [[nodiscard]] static SSLClient create_with_accept_certificate_handler();
 
 private:
-  explicit SSLClient(
-      Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> cert_handler,
-      Poco::Net::Context::Ptr net_context);
+  explicit SSLClient(Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> cert_handler,
+                     Poco::Net::Context::Ptr net_context);
 
   void initialize();
   Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> certificate_handler{};

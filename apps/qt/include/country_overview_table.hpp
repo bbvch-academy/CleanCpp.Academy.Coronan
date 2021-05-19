@@ -14,8 +14,7 @@ namespace coronan_gui {
 
 struct CountryOverviewTable
 {
-  void update(QTableWidget* const table_widget,
-              coronan::CountryData const& country_data);
+  void update(QTableWidget* const table_widget, coronan::CountryData const& country_data);
 };
 
 } // namespace coronan_gui
