@@ -17,23 +17,16 @@ CountryObject ApiParser::parse(std::string const& json)
   country_object.pop = country_data_object["population"].GetInt();
 
   country_object.today = CountryObject::today_t();
-  country_object.today.deaths =
-      country_data_object["today"].GetObject()["deaths"].GetInt();
-  country_object.today.conf =
-      country_data_object["today"].GetObject()["confirmed"].GetInt();
+  country_object.today.deaths = country_data_object["today"].GetObject()["deaths"].GetInt();
+  country_object.today.conf = country_data_object["today"].GetObject()["confirmed"].GetInt();
   auto const current_date = country_data_object["updated_at"].GetString();
   country_object.today.date = current_date;
   country_object.latest = CountryObject::latest_t();
-  country_object.latest.deaths =
-      country_data_object["latest_data"].GetObject()["deaths"].GetInt();
-  country_object.latest.conf =
-      country_data_object["latest_data"].GetObject()["confirmed"].GetInt();
-  country_object.latest.recovered =
-      country_data_object["latest_data"].GetObject()["recovered"].GetInt();
-  country_object.latest.critical =
-      country_data_object["latest_data"].GetObject()["critical"].GetInt();
-  auto const calculated =
-      country_data_object["latest_data"].GetObject()["calculated"].GetObject();
+  country_object.latest.deaths = country_data_object["latest_data"].GetObject()["deaths"].GetInt();
+  country_object.latest.conf = country_data_object["latest_data"].GetObject()["confirmed"].GetInt();
+  country_object.latest.recovered = country_data_object["latest_data"].GetObject()["recovered"].GetInt();
+  country_object.latest.critical = country_data_object["latest_data"].GetObject()["critical"].GetInt();
+  auto const calculated = country_data_object["latest_data"].GetObject()["calculated"].GetObject();
   if (calculated["death_rate"].IsNumber())
   {
     country_object.latest.dr = calculated["death_rate"].GetDouble();
@@ -52,8 +45,7 @@ CountryObject ApiParser::parse(std::string const& json)
   }
   if (calculated["recovered_vs_death_ratio"].IsNumber())
   {
-    country_object.latest.rdr =
-        calculated["recovered_vs_death_ratio"].GetDouble();
+    country_object.latest.rdr = calculated["recovered_vs_death_ratio"].GetDouble();
   }
   else
   {
@@ -61,8 +53,7 @@ CountryObject ApiParser::parse(std::string const& json)
   }
   if (calculated["cases_per_million_population"].IsNumber())
   {
-    country_object.latest.cpmp =
-        calculated["cases_per_million_population"].GetDouble();
+    country_object.latest.cpmp = calculated["cases_per_million_population"].GetDouble();
   }
   else
   {

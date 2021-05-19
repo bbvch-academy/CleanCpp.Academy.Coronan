@@ -26,8 +26,7 @@ CoronanWidget::CoronanWidget(std::string const& api_url, QWidget* parent)
 
   // populate country box
   auto http_response = coronan::HTTPClient::get(m_url);
-  auto json_object =
-      coronan::ApiParser().parse_countries(http_response.get_response_body());
+  auto json_object = coronan::ApiParser().parse_countries(http_response.get_response_body());
 
   auto* countryComboBox = m_ui->countryComboBox;
 
@@ -49,8 +48,7 @@ CoronanWidget::CoronanWidget(std::string const& api_url, QWidget* parent)
   }
 
   std::vector<coronan::OverviewObject::country_t>::iterator it;
-  for (it = json_object.countries.begin(); it != json_object.countries.end();
-       ++it)
+  for (it = json_object.countries.begin(); it != json_object.countries.end(); ++it)
   {
     countryComboBox->addItem((*it).name.c_str(), (*it).code.c_str());
   }
@@ -61,21 +59,15 @@ CoronanWidget::CoronanWidget(std::string const& api_url, QWidget* parent)
     countryComboBox->setCurrentIndex(index);
   }
 
-  auto country_code =
-      m_ui->countryComboBox->itemData(m_ui->countryComboBox->currentIndex())
-          .toString()
-          .toStdString();
+  auto country_code = m_ui->countryComboBox->itemData(m_ui->countryComboBox->currentIndex()).toString().toStdString();
 
-  http_response =
-      coronan::HTTPClient::get(m_url + std::string{"/"} + country_code);
-  auto const country_data =
-      coronan::ApiParser().parse(http_response.get_response_body());
+  http_response = coronan::HTTPClient::get(m_url + std::string{"/"} + country_code);
+  auto const country_data = coronan::ApiParser().parse(http_response.get_response_body());
 
   // Create chart
   QChart* chart = new QChart{};
 
-  chart->setTitle(
-      QString{"Corona (Covid-19) Cases in "}.append(country_data.cc.c_str()));
+  chart->setTitle(QString{"Corona (Covid-19) Cases in "}.append(country_data.cc.c_str()));
 
   auto const confirmed_serie_name = std::string{"Confirmed"};
   auto const death_serie_name = std::string{"Death"};
@@ -90,13 +82,11 @@ CoronanWidget::CoronanWidget(std::string const& api_url, QWidget* parent)
   auto* recovered_serie = new QLineSeries{};
   recovered_serie->setName(recovered_serie_name.c_str());
 
-  std::array<QLineSeries*, 4> series = {
-      {death_serie, confirmed_serie, active_serie, recovered_serie}};
+  std::array<QLineSeries*, 4> series = {{death_serie, confirmed_serie, active_serie, recovered_serie}};
 
   for (auto const& data_point : country_data.timeline)
   {
-    QDateTime date = QDateTime::fromString(data_point.date.c_str(),
-                                           "yyyy-MM-ddThh:mm:ss.zZ");
+    QDateTime date = QDateTime::fromString(data_point.date.c_str(), "yyyy-MM-ddThh:mm:ss.zZ");
     auto const msecs_since_epoche = date.toMSecsSinceEpoch();
     death_serie->append(QPointF(msecs_since_epoche, data_point.deaths));
     confirmed_serie->append(QPointF(msecs_since_epoche, data_point.conf));
@@ -140,48 +130,38 @@ CoronanWidget::CoronanWidget(std::string const& api_url, QWidget* parent)
 
   m_ui->gridLayout->addWidget(m_chartView, 2, 1);
 
-  m_ui->overviewTable->horizontalHeader()->setSectionResizeMode(
-      0, QHeaderView::ResizeToContents);
+  m_ui->overviewTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 
   // create country overview table
   m_ui->overviewTable->setRowCount(7);
 
   // Population
   m_ui->overviewTable->setItem(0, 0, new QTableWidgetItem{"Population:"});
-  m_ui->overviewTable->setItem(
-      0, 1, new QTableWidgetItem{QString::number(country_data.pop)});
+  m_ui->overviewTable->setItem(0, 1, new QTableWidgetItem{QString::number(country_data.pop)});
 
   // Population
   m_ui->overviewTable->setItem(1, 0, new QTableWidgetItem{"Confirmed:"});
-  m_ui->overviewTable->setItem(
-      1, 1, new QTableWidgetItem{QString::number(country_data.latest.conf)});
+  m_ui->overviewTable->setItem(1, 1, new QTableWidgetItem{QString::number(country_data.latest.conf)});
 
   // Death
   m_ui->overviewTable->setItem(2, 0, new QTableWidgetItem{"Death:"});
-  m_ui->overviewTable->setItem(
-      2, 1, new QTableWidgetItem{QString::number(country_data.latest.deaths)});
+  m_ui->overviewTable->setItem(2, 1, new QTableWidgetItem{QString::number(country_data.latest.deaths)});
 
   // Recovered
   m_ui->overviewTable->setItem(3, 0, new QTableWidgetItem{"Recovered:"});
-  m_ui->overviewTable->setItem(
-      3, 1,
-      new QTableWidgetItem{QString::number(country_data.latest.recovered)});
+  m_ui->overviewTable->setItem(3, 1, new QTableWidgetItem{QString::number(country_data.latest.recovered)});
 
   // Critical
   m_ui->overviewTable->setItem(4, 0, new QTableWidgetItem{"Critical:"});
-  m_ui->overviewTable->setItem(
-      4, 1,
-      new QTableWidgetItem{QString::number(country_data.latest.critical)});
+  m_ui->overviewTable->setItem(4, 1, new QTableWidgetItem{QString::number(country_data.latest.critical)});
 
   // Death rate
   m_ui->overviewTable->setItem(5, 0, new QTableWidgetItem{"Death rate:"});
-  m_ui->overviewTable->setItem(
-      5, 1, new QTableWidgetItem{QString::number(country_data.latest.dr)});
+  m_ui->overviewTable->setItem(5, 1, new QTableWidgetItem{QString::number(country_data.latest.dr)});
 
   // Critical
   m_ui->overviewTable->setItem(6, 0, new QTableWidgetItem{"Recovery rate:"});
-  m_ui->overviewTable->setItem(
-      6, 1, new QTableWidgetItem{QString::number(country_data.latest.rr)});
+  m_ui->overviewTable->setItem(6, 1, new QTableWidgetItem{QString::number(country_data.latest.rr)});
 
   // Set the colors from the light theme as default ones
   auto pal = qApp->palette();
@@ -190,24 +170,21 @@ CoronanWidget::CoronanWidget(std::string const& api_url, QWidget* parent)
   qApp->setPalette(pal);
 }
 
-CoronanWidget::~CoronanWidget() { delete m_ui; }
+CoronanWidget::~CoronanWidget()
+{
+  delete m_ui;
+}
 
 void CoronanWidget::update_ui()
 {
-  auto country_code =
-      m_ui->countryComboBox->itemData(m_ui->countryComboBox->currentIndex())
-          .toString()
-          .toStdString();
-  auto const http_response =
-      coronan::HTTPClient::get(m_url + std::string{"/"} + country_code);
-  auto const country_data =
-      coronan::ApiParser().parse(http_response.get_response_body());
+  auto country_code = m_ui->countryComboBox->itemData(m_ui->countryComboBox->currentIndex()).toString().toStdString();
+  auto const http_response = coronan::HTTPClient::get(m_url + std::string{"/"} + country_code);
+  auto const country_data = coronan::ApiParser().parse(http_response.get_response_body());
 
   // Create new chart
   QChart* chart = new QChart{};
 
-  chart->setTitle(
-      QString{"Corona (Covid-19) Cases in "}.append(country_data.cc.c_str()));
+  chart->setTitle(QString{"Corona (Covid-19) Cases in "}.append(country_data.cc.c_str()));
 
   auto const confirmed_serie_name = std::string{"Confirmed"};
   auto const death_serie_name = std::string{"Death"};
@@ -222,13 +199,11 @@ void CoronanWidget::update_ui()
   auto* recovered_serie = new QLineSeries{};
   recovered_serie->setName(recovered_serie_name.c_str());
 
-  std::array<QLineSeries*, 4> series = {
-      {death_serie, confirmed_serie, active_serie, recovered_serie}};
+  std::array<QLineSeries*, 4> series = {{death_serie, confirmed_serie, active_serie, recovered_serie}};
 
   for (auto const& data_point : country_data.timeline)
   {
-    QDateTime date = QDateTime::fromString(data_point.date.c_str(),
-                                           "yyyy-MM-ddThh:mm:ss.zZ");
+    QDateTime date = QDateTime::fromString(data_point.date.c_str(), "yyyy-MM-ddThh:mm:ss.zZ");
     auto const msecs_since_epoche = date.toMSecsSinceEpoch();
     death_serie->append(QPointF(msecs_since_epoche, data_point.deaths));
     confirmed_serie->append(QPointF(msecs_since_epoche, data_point.conf));
@@ -269,8 +244,7 @@ void CoronanWidget::update_ui()
   QChartView* new_chartView = new QChartView{chart};
 
   new_chartView->setRenderHint(QPainter::Antialiasing, true);
-  auto* old_layout =
-      m_ui->gridLayout->replaceWidget(m_chartView, new_chartView);
+  auto* old_layout = m_ui->gridLayout->replaceWidget(m_chartView, new_chartView);
   delete old_layout;
   m_chartView = new_chartView;
 
@@ -279,38 +253,29 @@ void CoronanWidget::update_ui()
 
   // Population
   m_ui->overviewTable->setItem(0, 0, new QTableWidgetItem{"Population:"});
-  m_ui->overviewTable->setItem(
-      0, 1, new QTableWidgetItem{QString::number(country_data.pop)});
+  m_ui->overviewTable->setItem(0, 1, new QTableWidgetItem{QString::number(country_data.pop)});
 
   // Population
   m_ui->overviewTable->setItem(1, 0, new QTableWidgetItem{"Confirmed:"});
-  m_ui->overviewTable->setItem(
-      1, 1, new QTableWidgetItem{QString::number(country_data.latest.conf)});
+  m_ui->overviewTable->setItem(1, 1, new QTableWidgetItem{QString::number(country_data.latest.conf)});
 
   // Death
   m_ui->overviewTable->setItem(2, 0, new QTableWidgetItem{"Death:"});
-  m_ui->overviewTable->setItem(
-      2, 1, new QTableWidgetItem{QString::number(country_data.latest.deaths)});
+  m_ui->overviewTable->setItem(2, 1, new QTableWidgetItem{QString::number(country_data.latest.deaths)});
 
   // Recovered
   m_ui->overviewTable->setItem(3, 0, new QTableWidgetItem{"Recovered:"});
-  m_ui->overviewTable->setItem(
-      3, 1,
-      new QTableWidgetItem{QString::number(country_data.latest.recovered)});
+  m_ui->overviewTable->setItem(3, 1, new QTableWidgetItem{QString::number(country_data.latest.recovered)});
 
   // Critical
   m_ui->overviewTable->setItem(4, 0, new QTableWidgetItem{"Critical:"});
-  m_ui->overviewTable->setItem(
-      4, 1,
-      new QTableWidgetItem{QString::number(country_data.latest.critical)});
+  m_ui->overviewTable->setItem(4, 1, new QTableWidgetItem{QString::number(country_data.latest.critical)});
 
   // Death rate
   m_ui->overviewTable->setItem(5, 0, new QTableWidgetItem{"Death rate:"});
-  m_ui->overviewTable->setItem(
-      5, 1, new QTableWidgetItem{QString::number(country_data.latest.dr)});
+  m_ui->overviewTable->setItem(5, 1, new QTableWidgetItem{QString::number(country_data.latest.dr)});
 
   // Critical
   m_ui->overviewTable->setItem(6, 0, new QTableWidgetItem{"Recovery rate:"});
-  m_ui->overviewTable->setItem(
-      6, 1, new QTableWidgetItem{QString::number(country_data.latest.rr)});
+  m_ui->overviewTable->setItem(6, 1, new QTableWidgetItem{QString::number(country_data.latest.rr)});
 }

@@ -23,8 +23,7 @@ public:
    * @param response http response status
    * @param response_body http response body
    */
-  explicit HTTPResponse(Poco::Net::HTTPResponse const& response,
-                        std::string const& response_body)
+  explicit HTTPResponse(Poco::Net::HTTPResponse const& response, std::string const& response_body)
       : response_{response}, response_body_{response_body}
   {
   }
@@ -40,12 +39,18 @@ public:
   /**
    * Return the HTTP reason phrase
    */
-  std::string get_reason() const { return response_.getReason(); }
+  std::string get_reason() const
+  {
+    return response_.getReason();
+  }
 
   /**
    * Return the HTTP response body
    */
-  std::string get_response_body() const { return response_body_; }
+  std::string get_response_body() const
+  {
+    return response_body_;
+  }
 
 private:
   Poco::Net::HTTPResponse response_{};
@@ -55,8 +60,7 @@ private:
 /**
  * Simple Stateless HTTP Client using by default a HTTPS Session
  */
-template <typename SessionT = Poco::Net::HTTPSClientSession,
-          typename HTTPRequestT = Poco::Net::HTTPRequest>
+template <typename SessionT = Poco::Net::HTTPSClientSession, typename HTTPRequestT = Poco::Net::HTTPRequest>
 struct HTTPClientT
 {
   /**
@@ -74,8 +78,7 @@ struct HTTPClientT
       return path_.empty() ? "/" : path_;
     }();
 
-    HTTPRequestT request{Poco::Net::HTTPRequest::HTTP_GET, path,
-                         Poco::Net::HTTPMessage::HTTP_1_1};
+    HTTPRequestT request{Poco::Net::HTTPRequest::HTTP_GET, path, Poco::Net::HTTPMessage::HTTP_1_1};
 
     Poco::Net::HTTPResponse response;
     session.sendRequest(request);

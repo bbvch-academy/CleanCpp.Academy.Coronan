@@ -20,22 +20,18 @@ int main(int argc, char* argv[])
   using Poco::Net::Context;
   using Poco::Net::InvalidCertificateHandler;
 
- #ifdef WIN32
-  Poco::Net::Context::Ptr context_ptr = Context::Ptr(
-      new Context{Context::TLS_CLIENT_USE, "", Context::VERIFY_RELAXED});
+#ifdef WIN32
+  Poco::Net::Context::Ptr context_ptr = Context::Ptr(new Context{Context::TLS_CLIENT_USE, "", Context::VERIFY_RELAXED});
 
 #else
-  Poco::Net::Context::Ptr context_ptr = Context::Ptr(
-      new Context(Context::TLS_CLIENT_USE, "", "", "", Context::VERIFY_RELAXED,
-                  9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH"));
+  Poco::Net::Context::Ptr context_ptr = Context::Ptr(new Context(
+      Context::TLS_CLIENT_USE, "", "", "", Context::VERIFY_RELAXED, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH"));
 #endif
 
-  Poco::SharedPtr<InvalidCertificateHandler> certificate_handler_ptr =
-      new Poco::Net::AcceptCertificateHandler(false);
+  Poco::SharedPtr<InvalidCertificateHandler> certificate_handler_ptr = new Poco::Net::AcceptCertificateHandler(false);
   Poco::Net::initializeSSL();
 
-  Poco::Net::SSLManager::instance().initializeClient(
-      nullptr, certificate_handler_ptr, context_ptr);
+  Poco::Net::SSLManager::instance().initializeClient(nullptr, certificate_handler_ptr, context_ptr);
   int result = 0;
 
   try

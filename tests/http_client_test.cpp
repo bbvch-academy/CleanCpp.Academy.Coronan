@@ -14,8 +14,7 @@ namespace {
 
 struct TestHTTPRequest
 {
-  TestHTTPRequest(std::string const& request, std::string const& path,
-                  std::string const& type)
+  TestHTTPRequest(std::string const& request, std::string const& path, std::string const& type)
   {
     TestHTTPRequest::request_ = request;
     TestHTTPRequest::type_ = type;
@@ -36,12 +35,14 @@ struct TestHTTPSession
     TestHTTPSession::host_ = host;
   }
 
-  std::ostream& sendRequest(TestHTTPRequest&) { return std::cout; }
+  std::ostream& sendRequest(TestHTTPRequest&)
+  {
+    return std::cout;
+  }
 
   std::istream& receiveResponse(HTTPResponse& response)
   {
-    response.setStatusAndReason(TestHTTPSession::response_status_,
-                                TestHTTPSession::response_reason_);
+    response.setStatusAndReason(TestHTTPSession::response_status_, TestHTTPSession::response_reason_);
     return TestHTTPSession::response_;
   }
 
@@ -62,8 +63,7 @@ struct TestHTTPSession
 
   inline static std::uint16_t port_{};
   inline static std::string host_{};
-  inline static HTTPResponse::HTTPStatus response_status_{
-      HTTPResponse::HTTP_OK};
+  inline static HTTPResponse::HTTPStatus response_status_{HTTPResponse::HTTP_OK};
   inline static std::string response_reason_{};
   inline static std::istringstream response_{""};
 };
@@ -73,8 +73,7 @@ TEST_CASE("HTTPClient get", "[HTTPClient]")
   SECTION("Initializes a session")
   {
     auto uri = "http://server.com:80/";
-    auto resonse =
-        coronan::HTTPClientT<TestHTTPSession, TestHTTPRequest>::get(uri);
+    auto resonse = coronan::HTTPClientT<TestHTTPSession, TestHTTPRequest>::get(uri);
 
     REQUIRE(TestHTTPSession::host_ == "server.com");
     REQUIRE(TestHTTPSession::port_ == 80);
@@ -83,8 +82,7 @@ TEST_CASE("HTTPClient get", "[HTTPClient]")
   SECTION("Creates a request")
   {
     auto uri = "http://server.com:80/test";
-    auto resonse =
-        coronan::HTTPClientT<TestHTTPSession, TestHTTPRequest>::get(uri);
+    auto resonse = coronan::HTTPClientT<TestHTTPSession, TestHTTPRequest>::get(uri);
     REQUIRE(TestHTTPRequest::request_ == HTTPRequest::HTTP_GET);
     REQUIRE(TestHTTPRequest::type_ == HTTPMessage::HTTP_1_1);
     REQUIRE(TestHTTPRequest::path_ == "/test");
@@ -101,8 +99,7 @@ TEST_CASE("HTTPClient get", "[HTTPClient]")
     TestHTTPSession::set_response(expected_response);
 
     auto uri = "http://server.com:80/test";
-    auto resonse =
-        coronan::HTTPClientT<TestHTTPSession, TestHTTPRequest>::get(uri);
+    auto resonse = coronan::HTTPClientT<TestHTTPSession, TestHTTPRequest>::get(uri);
 
     REQUIRE(resonse.get_status() == expected_status);
     REQUIRE(resonse.get_reason() == expected_reason);
