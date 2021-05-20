@@ -28,7 +28,7 @@ public:
 
 private:
   std::string const api_url = corona_api_url;
-  SSLClient ssl = SSLClient::create_with_accept_certificate_handler();
+  std::unique_ptr<SSLClient> ssl = SSLClient::create_with_accept_certificate_handler();
 };
 
 // Clean Code Note: Define a type which is easier to use in applications (no

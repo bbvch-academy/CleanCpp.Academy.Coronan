@@ -23,7 +23,7 @@ public:
   ~SSLClient();
   // Clean Code Note: Make explicite that the returning object must be used,
   // otherwise uninitialze happens
-  [[nodiscard]] static SSLClient create_with_accept_certificate_handler();
+  [[nodiscard]] static std::unique_ptr<SSLClient> create_with_accept_certificate_handler();
 
 private:
   explicit SSLClient(Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> cert_handler,

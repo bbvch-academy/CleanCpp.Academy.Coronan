@@ -1,5 +1,5 @@
 #pragma once
-#include "coronan/corona-api_parser.hpp"
+#include "coronan/corona-api_client.hpp"
 #include "country_overview_table.hpp"
 
 #include <QtCharts/QChartGlobal>
@@ -28,6 +28,8 @@ private Q_SLOTS:
 private:
   coronan::CountryData request_country_data(std::string const& country_code);
   void populate_country_box();
+
+  coronan::CoronaAPIClient api_lient{};
 
   CountryChartView* chartView = nullptr;
   Ui_CoronanWidgetForm* ui = nullptr;
