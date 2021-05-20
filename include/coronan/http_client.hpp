@@ -77,10 +77,13 @@ HTTPResponse HTTPClientT<SessionT, HTTPRequestT, HTTPResponseT>::get(std::string
     Poco::URI const uri{url};
     SessionT session(uri.getHost(), uri.getPort());
 
-    auto const path = [uri]() {
+    // Clean Code Note: IIFE Idion ("Immediately-invoked function expression")
+    // see also: https://www.bfilipek.com/2016/11/iife-for-complex-initialization.html
+    // To discuss: What do you like better: A separate method, or this IIFE idiom ?
+    auto const path = std::invoke([uri]() {
       auto const path_ = uri.getPathAndQuery();
       return path_.empty() ? "/" : path_;
-    }();
+    });
 
     HTTPRequestT request{"GET", path, "HTTP/1.1"};
 
