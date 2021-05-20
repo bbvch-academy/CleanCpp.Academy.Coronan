@@ -1,13 +1,10 @@
 #pragma once
 
-#include <Poco/Net/HTTPClientSession.h>
-#include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
-#include <Poco/Net/HTTPSClientSession.h>
-#include <Poco/Net/NetException.h>
-#include <Poco/Path.h>
 #include <Poco/StreamCopier.h>
 #include <Poco/URI.h>
+
+#include <functional>
 #include <stdexcept>
 #include <string>
 
@@ -59,8 +56,8 @@ private:
 /**
  * Simple Stateless HTTP Client
  */
-template <typename SessionT, typename HTTPRequestT, typename HTTPResponseT>
-struct HTTPClientT
+template <typename SessionType, typename HTTPRequestType, typename HTTPResponseType>
+struct HTTPClientType
 {
   /**
    * Execute a HTTP GET
@@ -69,13 +66,13 @@ struct HTTPClientT
   static HTTPResponse get(std::string const& url);
 };
 
-template <typename SessionT, typename HTTPRequestT, typename HTTPResponseT>
-HTTPResponse HTTPClientT<SessionT, HTTPRequestT, HTTPResponseT>::get(std::string const& url)
+template <typename SessionType, typename HTTPRequestType, typename HTTPResponseType>
+HTTPResponse HTTPClientType<SessionType, HTTPRequestType, HTTPResponseType>::get(std::string const& url)
 {
   try
   {
     Poco::URI const uri{url};
-    SessionT session(uri.getHost(), uri.getPort());
+    SessionType session(uri.getHost(), uri.getPort());
 
     // Clean Code Note: IIFE Idion ("Immediately-invoked function expression")
     // see also: https://www.bfilipek.com/2016/11/iife-for-complex-initialization.html
@@ -85,24 +82,24 @@ HTTPResponse HTTPClientT<SessionT, HTTPRequestT, HTTPResponseT>::get(std::string
       return path_.empty() ? "/" : path_;
     });
 
-    HTTPRequestT request{"GET", path, "HTTP/1.1"};
+    HTTPRequestType request{"GET", path, "HTTP/1.1"};
 
-    HTTPResponseT response;
+    HTTPResponseType response;
     session.sendRequest(request);
     auto& response_stream = session.receiveResponse(response);
 
-    std::string const response_content = [&response_stream]() {
+    std::string const response_content = std::invoke([&response_stream]() {
       std::string content;
       Poco::StreamCopier::copyToString(response_stream, content);
       return content;
-    }();
+    });
 
     return HTTPResponse{response, response_content};
   }
   catch (std::exception const& ex)
   {
     auto const exception_msg =
-        std::string{"Error fetching url \""} + url + std::string{"\".\n\n Exception occured: "} + ex.what();
+        std::string{"Error fetching url \""} + url + std::string{"\".\n\n Exception occurred: "} + ex.what();
     throw HTTPClientException{exception_msg};
   }
 }

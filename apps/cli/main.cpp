@@ -5,13 +5,13 @@
 #include <sstream>
 
 namespace {
-std::string parse_commandline_arguments(int argc, char* argv[]);
+std::string parse_commandline_arguments(lyra::args const &args);
 void print_data(coronan::CountryData const& country_data);
 } // namespace
 
 int main(int argc, char* argv[])
 {
-  std::string const country_code = parse_commandline_arguments(argc, argv);
+  std::string const country_code = parse_commandline_arguments({argc, argv});
 
   try
   {
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 }
 
 namespace {
-std::string parse_commandline_arguments(int argc, char* argv[])
+std::string parse_commandline_arguments(lyra::args const & args)
 {
   std::string country = "ch";
   bool help_request = false;
@@ -52,7 +52,7 @@ std::string parse_commandline_arguments(int argc, char* argv[])
   std::stringstream usage;
   usage << command_line_parser;
 
-  if (auto const result = command_line_parser.parse({argc, argv}); !result)
+  if (auto const result = command_line_parser.parse(args); !result)
   {
     fmt::print(stderr, "Error in comman line: {}\n", result.errorMessage());
     fmt::print("{}\n", usage.str());

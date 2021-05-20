@@ -4,7 +4,8 @@
 #include "coronan/http_client.hpp"
 #include "coronan/ssl_client.hpp"
 
-#include <algorithm>
+#include <Poco/Net/HTTPRequest.h>
+#include <Poco/Net/HTTPSClientSession.h>
 #include <string>
 #include <vector>
 
@@ -14,7 +15,7 @@ namespace {
 constexpr auto corona_api_url = "https://corona-api.com";
 }
 
-using HTTPClient = HTTPClientT<Poco::Net::HTTPSClientSession, Poco::Net::HTTPRequest, Poco::Net::HTTPResponse>;
+using HTTPClient = HTTPClientType<Poco::Net::HTTPSClientSession, Poco::Net::HTTPRequest, Poco::Net::HTTPResponse>;
 
 // Clean Code Note: Having a dedicated class remived duplication in the two apps
 // (cli & Qt aa) using the data Templated to have Compile time polymorphism and
@@ -28,7 +29,7 @@ public:
 
 private:
   std::string const api_url = corona_api_url;
-  std::unique_ptr<SSLClient> ssl = SSLClient::create_with_accept_certificate_handler();
+  std::unique_ptr<SSLClient> ssl_client = SSLClient::create_with_accept_certificate_handler();
 };
 
 // Clean Code Note: Define a type which is easier to use in applications (no

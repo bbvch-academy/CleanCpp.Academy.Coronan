@@ -4,7 +4,7 @@
 #include <Poco/Net/InvalidCertificateHandler.h>
 #include <Poco/Net/SSLException.h>
 #include <Poco/SharedPtr.h>
-#include <functional>
+
 #include <memory>
 
 namespace coronan {
@@ -21,8 +21,8 @@ class SSLClient final
 {
 public:
   ~SSLClient();
-  // Clean Code Note: Make explicite that the returning object must be used,
-  // otherwise uninitialze happens
+  // Clean Code Note: Make explicit that the returning object must be used,
+  // otherwise uninitialize happens
   [[nodiscard]] static std::unique_ptr<SSLClient> create_with_accept_certificate_handler();
 
 private:

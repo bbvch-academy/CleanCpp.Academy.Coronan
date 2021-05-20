@@ -5,7 +5,7 @@
 namespace coronan {
 namespace ssl_context {
 
-Poco::Net::Context::Ptr create_NetSSL_context();
+Poco::Net::Context::Ptr create_ssl_context();
 
 } // namespace ssl_context
 } // namespace coronan

@@ -1,6 +1,5 @@
 
 #include "coronan/ssl_client.hpp"
-
 #include "coronan/ssl_context.hpp"
 
 #include <Poco/Net/AcceptCertificateHandler.h>
@@ -34,7 +33,7 @@ SSLClient::create_with_accept_certificate_handler()
   Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> cert_handler =
       new Poco::Net::AcceptCertificateHandler{handle_errors_on_server_side};
 
-  auto ssl_client = std::unique_ptr<SSLClient>{new SSLClient{cert_handler, coronan::ssl_context::create_NetSSL_context()}};
+  auto ssl_client = std::unique_ptr<SSLClient>{new SSLClient{cert_handler, coronan::ssl_context::create_ssl_context()}};
 
   ssl_client->initialize();
   return ssl_client;
