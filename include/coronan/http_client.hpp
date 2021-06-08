@@ -3,17 +3,20 @@
 #include <Poco/Net/HTTPResponse.h>
 #include <Poco/StreamCopier.h>
 #include <Poco/URI.h>
-
 #include <functional>
 #include <stdexcept>
 #include <string>
 
 namespace coronan {
 
+/**
+ * A HTTPClientException including Http get and Net exceptions.
+ */
 class HTTPClientException : public std::exception
 {
 public:
-  explicit HTTPClientException(std::string const& exception_msg);
+  explicit HTTPClientException(std::string exception_msg);
+  HTTPClientException(HTTPClientException const&) = delete;
   char const* what() const noexcept override;
 
 private:
@@ -27,11 +30,11 @@ class HTTPResponse
 {
 public:
   /**
-   *  Consructor
-   * @param response http response status
+   *  Constructor
+   * @param response http response
    * @param response_body http response body
    */
-  explicit HTTPResponse(Poco::Net::HTTPResponse const& response, std::string const& response_body);
+  explicit HTTPResponse(Poco::Net::HTTPResponse const& response, std::string response_body);
 
   /**
    * Return the HTTP status code
@@ -74,7 +77,7 @@ HTTPResponse HTTPClientType<SessionType, HTTPRequestType, HTTPResponseType>::get
     Poco::URI const uri{url};
     SessionType session(uri.getHost(), uri.getPort());
 
-    // Clean Code Note: IIFE Idion ("Immediately-invoked function expression")
+    // Clean Code Note: IIFE Idiom ("Immediately-invoked function expression")
     // see also: https://www.bfilipek.com/2016/11/iife-for-complex-initialization.html
     // To discuss: What do you like better: A separate method, or this IIFE idiom ?
     auto const path = std::invoke([uri]() {

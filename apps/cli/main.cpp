@@ -5,7 +5,7 @@
 #include <sstream>
 
 namespace {
-std::string parse_commandline_arguments(lyra::args const &args);
+std::string parse_commandline_arguments(lyra::args const& args);
 void print_data(coronan::CountryData const& country_data);
 } // namespace
 
@@ -35,14 +35,13 @@ int main(int argc, char* argv[])
     fmt::print(stderr, "{}\n", ex.what());
     exit(EXIT_FAILURE);
   }
-
   // Clean Code Note: Poco::Net::uninitializeSSL(); called in destructor of the
   // CoronaAPIClient
   exit(EXIT_SUCCESS);
 }
 
 namespace {
-std::string parse_commandline_arguments(lyra::args const & args)
+std::string parse_commandline_arguments(lyra::args const& args)
 {
   std::string country = "ch";
   bool help_request = false;

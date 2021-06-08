@@ -4,7 +4,6 @@
 #include <Poco/Net/InvalidCertificateHandler.h>
 #include <Poco/Net/SSLException.h>
 #include <Poco/SharedPtr.h>
-
 #include <memory>
 
 namespace coronan {
@@ -20,10 +19,18 @@ using SSLException = Poco::Net::SSLException;
 class SSLClient final
 {
 public:
-  ~SSLClient();
-  // Clean Code Note: Make explicit that the returning object must be used,
-  // otherwise uninitialize happens
+  /**
+   * Return a SSLClient with an accept all certifcates handler
+   * @return SSLClient which must be hold by the caler until no longer needed.
+   */
   [[nodiscard]] static std::unique_ptr<SSLClient> create_with_accept_certificate_handler();
+
+  ~SSLClient();
+  // Clean Code Note: If you musr do manual resource managment follow the Rule of 5 (Rule of 3 before C++11)
+  SSLClient(SSLClient&&) = delete;
+  SSLClient(SSLClient const&) = delete;
+  SSLClient& operator=(SSLClient&&) = delete;
+  SSLClient& operator=(SSLClient const&) = delete;
 
 private:
   explicit SSLClient(Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> cert_handler,

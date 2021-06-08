@@ -13,14 +13,14 @@ using Catch::Matchers::Equals;
 class TestHTTPClient
 {
 public:
-  static coronan::HTTPResponse get(std::string const& url)
+  static coronan::HTTPResponse get(std::string_view url)
   {
     get_called = true;
     get_url = url;
     return coronan::HTTPResponse{Poco::Net::HTTPResponse{response_status}, response_payload};
   }
 
-  static bool get_was_called_with(std::string const& url)
+  static bool get_was_called_with(std::string_view url)
   {
     return (get_called && (get_url == url));
   }
@@ -36,7 +36,7 @@ std::string TestHTTPClient::get_url = "";
 Poco::Net::HTTPResponse::HTTPStatus TestHTTPClient::response_status = Poco::Net::HTTPResponse::HTTP_CONTINUE;
 std::string TestHTTPClient::response_payload = "";
 
-SCENARIO("CoronaAPIClient retrieved country list", "[CoronaAPIClient]")
+SCENARIO("CoronaAPIClient retrieves country list", "[CoronaAPIClient]")
 {
   GIVEN("A corona-api client")
   {
@@ -55,7 +55,7 @@ SCENARIO("CoronaAPIClient retrieved country list", "[CoronaAPIClient]")
     }
 
     WHEN("the http client returns an OK response status and a country list "
-         "payload")
+         "in the payload")
     {
       TestHTTPClient::response_status = Poco::Net::HTTPResponse::HTTP_OK;
       TestHTTPClient::response_payload = "{ \
@@ -82,7 +82,7 @@ SCENARIO("CoronaAPIClient retrieved country list", "[CoronaAPIClient]")
 
       REQUIRE(TestHTTPClient::get_was_called_with("https://corona-api.com/countries"));
 
-      THEN("a list of country codes is returned.")
+      THEN("a list of country names and iso country codes is returned.")
       {
         REQUIRE(countries.size() == 3);
         REQUIRE_THAT(countries[0].name, Equals("Austria"));
@@ -96,7 +96,7 @@ SCENARIO("CoronaAPIClient retrieved country list", "[CoronaAPIClient]")
   }
 }
 
-SCENARIO("CoronaAPIClient retrieved country data for Switzerland", "[CoronaAPIClient]")
+SCENARIO("CoronaAPIClient retrieves country data for Switzerland", "[CoronaAPIClient]")
 {
   GIVEN("A corona-api client")
   {
@@ -114,8 +114,8 @@ SCENARIO("CoronaAPIClient retrieved country data for Switzerland", "[CoronaAPICl
       }
     }
 
-    WHEN("the http client returns an OK response status and a country data "
-         "payload")
+    WHEN("the http client returns an OK response status and a payload with "
+         "data for Switzerland")
     {
       TestHTTPClient::response_status = Poco::Net::HTTPResponse::HTTP_OK;
       TestHTTPClient::response_payload = "{ \
@@ -180,6 +180,7 @@ SCENARIO("CoronaAPIClient retrieved country data for Switzerland", "[CoronaAPICl
         REQUIRE(country_data.info.name == "Switzerland");
         REQUIRE(country_data.info.iso_code == "CH");
         REQUIRE(country_data.info.population == 7581000);
+        REQUIRE(country_data.today.confirmed == 1059);
       }
     }
   }
