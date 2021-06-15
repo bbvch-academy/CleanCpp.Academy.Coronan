@@ -9,7 +9,7 @@
 namespace coronan {
 
 namespace api_parser {
-// Clean Code Note: No need to have class. free functions are preferable
+// Clean Code Note: No need to have a class. Free functions are preferable
 // (Scott Meyers  Effective C++ item 23: Prefer Non-member Non-friend Functions
 // to Member Functions)
 // C++ Core Guidelines: C.4 - Make a function a member only if it needs direct

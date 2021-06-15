@@ -2,7 +2,7 @@
 
 namespace coronan::ssl_context {
 
-Poco::Net::Context::Ptr create_ssl_context()
+Poco::Net::Context::Ptr create_verify_relaxed_context()
 {
   using Poco::Net::Context;
   constexpr auto ca_location = "";

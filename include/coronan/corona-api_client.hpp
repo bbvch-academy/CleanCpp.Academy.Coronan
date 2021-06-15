@@ -17,9 +17,10 @@ constexpr auto corona_api_url = "https://corona-api.com";
 
 using HTTPClient = HTTPClientType<Poco::Net::HTTPSClientSession, Poco::Net::HTTPRequest, Poco::Net::HTTPResponse>;
 
-// Clean Code Note: Having a dedicated class remived duplication in the two apps
-// (cli & Qt aa) using the data Templated to have Compile time polymorphism and
-// to allow unittesting without Runtime dependency injection
+// Clean Code Note: Having a dedicated class removed duplication in the two apps
+// (cli & Qt app)
+// The template argument allows to have compile time polymorphism and
+// to unittest without Runtime dependency injection
 /**
  * A Client for retrieving data from https://corona-api.com.
  */

@@ -26,7 +26,9 @@ target_sources(
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/corona-api_parser.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/ssl_client.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/http_client.cpp
-          $<IF:$<BOOL:${WIN32}>,
+          $<IF:$<BOOL:${WIN32}>, # Clean Code Note: Compile the ssl_context-
+                                 # win.cpp source if win32 or ssl_context-
+                                 # linux.cpp otherwise
           ${CMAKE_CURRENT_SOURCE_DIR}/ssl_context-win.cpp,
           ${CMAKE_CURRENT_SOURCE_DIR}/ssl_context-linux.cpp>)
 

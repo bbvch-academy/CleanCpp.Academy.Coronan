@@ -67,7 +67,7 @@ Ret_T get_value(DOM_T const& json_dom_object, std::string const& name)
 // The use of helper methods (lambdas) makes code more readable and reusable at
 // different places
 // according Core guidelines F.50 a function would be prefered over an lambda
-// however auto is not supported in all compilers for functions yet.
+// however auto argument type deduction is not supported in all compilers for functions yet.
 constexpr auto parse_today_data = [](auto const& json_dom_object) {
   CountryData::TodayData today{};
   if (json_dom_object.HasMember("today"))

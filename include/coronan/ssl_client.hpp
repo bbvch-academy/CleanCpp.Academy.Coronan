@@ -10,7 +10,7 @@ namespace coronan {
 
 using SSLException = Poco::Net::SSLException;
 
-// Clean Code Note: Put the SSL initialisation and uninitialisation in proper
+// Clean Code Note: Put the SSL initialisation and uninitialisation in a proper
 // RAII class
 /**
  * An RAII wrapper to initialize & uninitialize the POCO::Net SSL stuff
@@ -20,13 +20,13 @@ class SSLClient final
 {
 public:
   /**
-   * Return a SSLClient with an accept all certifcates handler
-   * @return SSLClient which must be hold by the caler until no longer needed.
+   * Return a SSLClient with an accept all certificates handler
+   * @return SSLClient which must be hold by the caller until no longer needed.
    */
   [[nodiscard]] static std::unique_ptr<SSLClient> create_with_accept_certificate_handler();
 
   ~SSLClient();
-  // Clean Code Note: If you musr do manual resource managment follow the Rule of 5 (Rule of 3 before C++11)
+  // Clean Code Note: If you must do manual resource management follow the Rule of 5 (Rule of 3 before C++11)
   SSLClient(SSLClient&&) = delete;
   SSLClient(SSLClient const&) = delete;
   SSLClient& operator=(SSLClient&&) = delete;
